@@ -90,6 +90,8 @@ class Event:
             "rct": "Receipt",
             "qry": "Query",
             "rpy": "Reply",
+            "pro": "Prod",
+            "bar": "Bare",
             "exn": "Exchange",
             "vcp": "VC Registry Inception",
             "vrt": "VC Registry Rotation",
@@ -111,3 +113,31 @@ class Event:
         """Truncated identifier for display."""
         i = self.identifier
         return f"{i[:16]}..." if len(i) > 16 else i
+
+    @property
+    def protocol(self) -> str:
+        """Protocol identifier (KERI, ACDC, etc.)."""
+        v = self.version
+        return v[:4] if len(v) >= 4 else ""
+
+    @property
+    def cesr_version(self) -> str:
+        """CESR version as 'major.minor' (e.g., '1.0', '2.0')."""
+        v = self.version
+        if len(v) >= 6:
+            major = v[4:5]
+            minor = v[5:6]
+            return f"{major}.{minor}"
+        return ""
+
+    @property
+    def cesr_major_version(self) -> str:
+        """CESR major version number (e.g., '1', '2')."""
+        v = self.version
+        return v[4:5] if len(v) >= 5 else ""
+
+    @property
+    def serialization(self) -> str:
+        """Serialization format (JSON, CBOR, MGPK)."""
+        v = self.version
+        return v[6:10] if len(v) >= 10 else ""

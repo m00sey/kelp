@@ -60,8 +60,8 @@ class OOBISource(DataSource):
         """Fetch all events from the OOBI endpoint.
 
         Args:
-            identifier: Optional AID to filter events (ignored for OOBI,
-                        as the OOBI URL already specifies the identifier)
+            identifier: Optional AID to filter events. If not specified,
+                        returns all events from the endpoint.
 
         Returns:
             List of Event objects
@@ -76,7 +76,7 @@ class OOBISource(DataSource):
             data = response.content
             events = self._parser.parse(data)
 
-            # Filter by identifier if specified
+            # Filter by identifier if explicitly specified
             if identifier:
                 events = [e for e in events if e.identifier == identifier]
 

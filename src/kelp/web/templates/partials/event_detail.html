@@ -3,8 +3,14 @@
 <div class="event-detail">
     <div class="event-meta">
         <span class="badge type-{{ event.type }}">{{ event.type_label }}</span>
-        <span class="meta-item"><strong>Sequence:</strong> {{ event.sequence }}</span>
-        <span class="meta-item"><strong>Identifier:</strong> <code title="{{ event.identifier }}">{{ event.short_identifier }}</code></span>
+        {% if event.cesr_version %}
+        <span class="badge version-badge version-{{ event.cesr_major_version }}">CESR {{ event.cesr_version }}</span>
+        {% endif %}
+        <span class="meta-item"><strong>Sequence number:</strong> {{ event.sequence_hex }} ({{ event.sequence }})</span>
+    </div>
+    <div class="identifier-row">
+        <strong>Identifier:</strong>
+        <code class="full-value">{{ event.identifier }}</code>
     </div>
 
     <div class="json-section">
@@ -35,30 +41,30 @@
                 <div class="material-item">
                     {% if mat.type == 'indexed_sig' %}
                     <span class="material-label">Sig #{{ mat.index }}</span>
-                    <code class="material-value" title="{{ mat.qb64 }}">{{ mat.qb64[:40] }}...</code>
+                    <code class="full-value">{{ mat.qb64 }}</code>
                     {% elif mat.type == 'witness_sig' %}
-                    <span class="material-label">Witness Sig #{{ mat.index }}</span>
-                    <code class="material-value" title="{{ mat.qb64 }}">{{ mat.qb64[:40] }}...</code>
+                    <span class="material-label">Witness #{{ mat.index }}</span>
+                    <code class="full-value">{{ mat.qb64 }}</code>
                     {% elif mat.type == 'receipt_couple' %}
-                    <span class="material-label">Receipt</span>
-                    <code class="material-value" title="{{ mat.prefix }}">Pre: {{ mat.prefix[:24] }}...</code>
+                    <span class="material-label">Prefix</span>
+                    <code class="full-value">{{ mat.prefix }}</code>
                     {% elif mat.type == 'seal_source' %}
                     <span class="material-label">Seal sn={{ mat.sn }}</span>
-                    <code class="material-value" title="{{ mat.said }}">{{ mat.said[:32] }}...</code>
+                    <code class="full-value">{{ mat.said }}</code>
                     {% elif mat.type == 'first_seen' %}
                     <span class="material-label">First Seen sn={{ mat.sn }}</span>
-                    <code class="material-value">{{ mat.datetime }}</code>
+                    <code class="full-value">{{ mat.datetime }}</code>
                     {% elif mat.type == 'matter' %}
                     <span class="material-label">{{ mat.code }}</span>
-                    <code class="material-value" title="{{ mat.qb64 }}">{{ mat.qb64[:40] }}{% if mat.qb64|length > 40 %}...{% endif %}</code>
+                    <code class="full-value">{{ mat.qb64 }}</code>
                     {% else %}
-                    <code class="material-value">{{ mat }}</code>
+                    <code class="full-value">{{ mat }}</code>
                     {% endif %}
                 </div>
                 {% endfor %}
             </div>
             {% else %}
-            <code class="attachment-raw">{{ attachment.raw[:100] }}{% if attachment.raw|length > 100 %}...{% endif %}</code>
+            <code class="full-value attachment-raw">{{ attachment.raw }}</code>
             {% endif %}
         </div>
         {% endfor %}

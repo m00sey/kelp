@@ -11,6 +11,12 @@
     <button hx-get="/events?filter_type=ixn" hx-target="#event-list" class="{% if filter_type == 'ixn' %}active{% endif %}">ixn</button>
     <button hx-get="/events?filter_type=dip" hx-target="#event-list" class="{% if filter_type == 'dip' %}active{% endif %}">dip</button>
     <button hx-get="/events?filter_type=drt" hx-target="#event-list" class="{% if filter_type == 'drt' %}active{% endif %}">drt</button>
+    {% if is_witness %}
+    <span class="filter-separator"></span>
+    <button hx-post="/toggle-all-aids" hx-target="#main-content" hx-swap="innerHTML" class="toggle-aids {% if show_all_aids %}active{% endif %}">
+        {% if show_all_aids %}Showing All AIDs{% else %}Show All AIDs{% endif %}
+    </button>
+    {% endif %}
 </div>
 
 <div class="content-grid">

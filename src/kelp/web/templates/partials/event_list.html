@@ -1,15 +1,47 @@
-<ul class="event-list">
+{% if is_witness and events_by_aid %}
+{# Accordion view for witness endpoints - group by AID #}
+<div class="aid-accordion">
+{% for aid, items in events_by_aid.items() %}
+    <details class="aid-group" {% if loop.first %}open{% endif %}>
+        <summary class="aid-header">
+            <span class="aid-full">{{ aid }}</span>
+            <span class="event-count">{{ items|length }}</span>
+        </summary>
+        <ul class="event-list">
+        {% for item in items %}
+            <li class="event-item {% if item.index == selected_index %}selected{% endif %} version-{{ item.event.cesr_major_version }}"
+                hx-get="/event/{{ item.index }}"
+                hx-target="#event-detail"
+                hx-swap="innerHTML"
+                title="{{ item.event.identifier }}">
+                <span class="seq">s={{ item.event.sequence_hex }} ({{ item.event.sequence }})</span>
+                <span class="type type-{{ item.event.type }}">{{ item.event.type }}</span>
+                {% if item.event.cesr_version %}<span class="version-indicator">{{ item.event.cesr_version }}</span>{% endif %}
+            </li>
+        {% endfor %}
+        </ul>
+    </details>
+{% else %}
+    <div class="no-events">No events match the filter</div>
+{% endfor %}
+</div>
+{% else %}
+{# Flat list view for single AID endpoints #}
+<ul class="event-list flat-list">
 {% for event in events %}
-    <li class="event-item {% if loop.index0 == selected_index %}selected{% endif %}"
+    <li class="event-item {% if loop.index0 == selected_index %}selected{% endif %} version-{{ event.cesr_major_version }}"
         hx-get="/event/{{ loop.index0 }}"
         hx-target="#event-detail"
-        hx-swap="innerHTML"
-        title="{{ event.identifier }}">
-        <span class="seq">s={{ event.sequence }} ({{ event.sequence_hex }})</span>
-        <span class="type type-{{ event.type }}">{{ event.type }}</span>
-        <span class="aid" title="{{ event.identifier }}">{{ event.identifier[:8] }}</span>
+        hx-swap="innerHTML">
+        <div class="event-row">
+            <span class="seq">s={{ event.sequence_hex }} ({{ event.sequence }})</span>
+            <span class="type type-{{ event.type }}">{{ event.type }}</span>
+            {% if event.cesr_version %}<span class="version-indicator">{{ event.cesr_version }}</span>{% endif %}
+        </div>
+        <code class="aid-full">{{ event.identifier }}</code>
     </li>
 {% else %}
     <li class="no-events">No events match the filter</li>
 {% endfor %}
 </ul>
+{% endif %}

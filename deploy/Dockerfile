@@ -14,7 +14,8 @@ RUN pip install uv
 COPY pyproject.toml .
 COPY src/ src/
 
-# Install dependencies
+# Install dependencies (increased timeout for slower networks)
+ENV UV_HTTP_TIMEOUT=120
 RUN uv pip install --system .
 
 # Run uvicorn
