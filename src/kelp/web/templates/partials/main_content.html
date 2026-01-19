@@ -1,0 +1,40 @@
+{% if message %}
+<div class="message">{{ message }}</div>
+{% endif %}
+
+{% if events %}
+<div class="filter-bar">
+    <span>Filter:</span>
+    <button hx-get="/events?filter_type=all" hx-target="#event-list" class="{% if not filter_type or filter_type == 'all' %}active{% endif %}">All</button>
+    <button hx-get="/events?filter_type=icp" hx-target="#event-list" class="{% if filter_type == 'icp' %}active{% endif %}">icp</button>
+    <button hx-get="/events?filter_type=rot" hx-target="#event-list" class="{% if filter_type == 'rot' %}active{% endif %}">rot</button>
+    <button hx-get="/events?filter_type=ixn" hx-target="#event-list" class="{% if filter_type == 'ixn' %}active{% endif %}">ixn</button>
+    <button hx-get="/events?filter_type=dip" hx-target="#event-list" class="{% if filter_type == 'dip' %}active{% endif %}">dip</button>
+    <button hx-get="/events?filter_type=drt" hx-target="#event-list" class="{% if filter_type == 'drt' %}active{% endif %}">drt</button>
+</div>
+
+<div class="content-grid">
+    <div class="event-list-container">
+        <div class="panel-header">Events ({{ events|length }})</div>
+        <div id="event-list">
+            {% include "partials/event_list.html" %}
+        </div>
+    </div>
+
+    <div class="event-detail-container">
+        <div class="panel-header">Event Detail</div>
+        <div id="event-detail">
+            {% if selected_event %}
+                {% include "partials/event_detail.html" with context %}
+            {% else %}
+                <p class="no-selection">Select an event to view details</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="empty-state">
+    <p>Enter an OOBI URL above to load events</p>
+    <p class="example">Example: http://65.21.253.212:5623/oobi/EINmHd5g7iV-UldkkkKyBIH052bIyxZNBn9pq-zNrYoS/witness</p>
+</div>
+{% endif %}

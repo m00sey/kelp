@@ -1,0 +1,70 @@
+{% set event = event if event is defined else selected_event %}
+{% if event %}
+<div class="event-detail">
+    <div class="event-meta">
+        <span class="badge type-{{ event.type }}">{{ event.type_label }}</span>
+        <span class="meta-item"><strong>Sequence:</strong> {{ event.sequence }}</span>
+        <span class="meta-item"><strong>Identifier:</strong> <code title="{{ event.identifier }}">{{ event.short_identifier }}</code></span>
+    </div>
+
+    <div class="json-section">
+        <h3>Event Data</h3>
+        <pre class="json-content">{{ event.data | tojson_pretty }}</pre>
+    </div>
+
+    {% if event.attachments %}
+    <div class="attachments-section">
+        <h3>Attachments ({{ event.attachments|length }})</h3>
+        {% for attachment in event.attachments %}
+        <div class="attachment-item">
+            <div class="attachment-header">
+                <span class="attachment-type">{{ attachment.name }}</span>
+                <span class="attachment-code">[{{ attachment.code }}]</span>
+                {% if attachment.count > 0 %}
+                    {% if attachment.code in ['-V', '-0V', '-W', '-0W', '-Z', '-0Z', '-L', '-0L'] %}
+                <span class="attachment-count">{{ attachment.count * 4 }} bytes</span>
+                    {% else %}
+                <span class="attachment-count">{{ attachment.count }} sig{% if attachment.count != 1 %}s{% endif %}</span>
+                    {% endif %}
+                {% endif %}
+            </div>
+
+            {% if attachment.materials %}
+            <div class="attachment-materials">
+                {% for mat in attachment.materials %}
+                <div class="material-item">
+                    {% if mat.type == 'indexed_sig' %}
+                    <span class="material-label">Sig #{{ mat.index }}</span>
+                    <code class="material-value" title="{{ mat.qb64 }}">{{ mat.qb64[:40] }}...</code>
+                    {% elif mat.type == 'witness_sig' %}
+                    <span class="material-label">Witness Sig #{{ mat.index }}</span>
+                    <code class="material-value" title="{{ mat.qb64 }}">{{ mat.qb64[:40] }}...</code>
+                    {% elif mat.type == 'receipt_couple' %}
+                    <span class="material-label">Receipt</span>
+                    <code class="material-value" title="{{ mat.prefix }}">Pre: {{ mat.prefix[:24] }}...</code>
+                    {% elif mat.type == 'seal_source' %}
+                    <span class="material-label">Seal sn={{ mat.sn }}</span>
+                    <code class="material-value" title="{{ mat.said }}">{{ mat.said[:32] }}...</code>
+                    {% elif mat.type == 'first_seen' %}
+                    <span class="material-label">First Seen sn={{ mat.sn }}</span>
+                    <code class="material-value">{{ mat.datetime }}</code>
+                    {% elif mat.type == 'matter' %}
+                    <span class="material-label">{{ mat.code }}</span>
+                    <code class="material-value" title="{{ mat.qb64 }}">{{ mat.qb64[:40] }}{% if mat.qb64|length > 40 %}...{% endif %}</code>
+                    {% else %}
+                    <code class="material-value">{{ mat }}</code>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <code class="attachment-raw">{{ attachment.raw[:100] }}{% if attachment.raw|length > 100 %}...{% endif %}</code>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% else %}
+<p class="no-selection">Select an event to view details</p>
+{% endif %}

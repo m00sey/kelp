@@ -1,0 +1,15 @@
+<ul class="event-list">
+{% for event in events %}
+    <li class="event-item {% if loop.index0 == selected_index %}selected{% endif %}"
+        hx-get="/event/{{ loop.index0 }}"
+        hx-target="#event-detail"
+        hx-swap="innerHTML"
+        title="{{ event.identifier }}">
+        <span class="seq">s={{ event.sequence }} ({{ event.sequence_hex }})</span>
+        <span class="type type-{{ event.type }}">{{ event.type }}</span>
+        <span class="aid" title="{{ event.identifier }}">{{ event.identifier[:8] }}</span>
+    </li>
+{% else %}
+    <li class="no-events">No events match the filter</li>
+{% endfor %}
+</ul>
