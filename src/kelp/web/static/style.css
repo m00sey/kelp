@@ -430,6 +430,29 @@ footer {
     font-size: 0.85rem;
 }
 
+/* Copy Raw button */
+.copy-raw-btn {
+    margin-left: auto;
+    padding: 0.25rem 0.75rem;
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.2s;
+}
+
+.copy-raw-btn:hover {
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+}
+
+.copy-raw-btn.copied {
+    background: var(--success);
+    border-color: var(--success);
+}
+
 /* Identifier row */
 .identifier-row {
     display: flex;

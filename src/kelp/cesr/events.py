@@ -141,3 +141,11 @@ class Event:
         """Serialization format (JSON, CBOR, MGPK)."""
         v = self.version
         return v[6:10] if len(v) >= 10 else ""
+
+    @property
+    def raw_cesr(self) -> str:
+        """Full raw CESR stream: event JSON + all attachment data."""
+        parts = [self.raw]
+        for attachment in self.attachments:
+            parts.append(attachment.raw)
+        return "".join(parts)

@@ -7,6 +7,7 @@
         <span class="badge version-badge version-{{ event.cesr_major_version }}">CESR {{ event.cesr_version }}</span>
         {% endif %}
         <span class="meta-item"><strong>Sequence number:</strong> {{ event.sequence_hex }} ({{ event.sequence }})</span>
+        <button class="copy-raw-btn" onclick="copyRawCesr(this)" data-raw="{{ event.raw_cesr | e }}">Copy Raw</button>
     </div>
     <div class="identifier-row">
         <strong>Identifier:</strong>
