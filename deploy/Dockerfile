@@ -18,6 +18,10 @@ COPY src/ src/
 ENV UV_HTTP_TIMEOUT=120
 RUN uv pip install --system .
 
+# Create non-root user and switch to it
+RUN useradd --create-home --shell /bin/bash appuser
+USER appuser
+
 # Run uvicorn
 EXPOSE 8000
 CMD ["uvicorn", "kelp.web:app", "--host", "0.0.0.0", "--port", "8000"]

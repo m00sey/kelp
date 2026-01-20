@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" preserveAspectRatio="xMidYMax slice">
+  <defs>
+    <linearGradient id="kelp1" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" style="stop-color:#2d5a3d"/>
+      <stop offset="100%" style="stop-color:#6b8e6b"/>
+    </linearGradient>
+    <linearGradient id="kelp2" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" style="stop-color:#3d6a4a"/>
+      <stop offset="100%" style="stop-color:#8fbc8f"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Bubbles -->
+  <circle cx="50" cy="80" r="3" fill="#d4e8e4" opacity="0.2"/>
+  <circle cx="55" cy="100" r="2" fill="#d4e8e4" opacity="0.15"/>
+  <circle cx="340" cy="60" r="4" fill="#d4e8e4" opacity="0.2"/>
+  <circle cx="350" cy="90" r="2" fill="#d4e8e4" opacity="0.15"/>
+  <circle cx="180" cy="50" r="2" fill="#d4e8e4" opacity="0.1"/>
+
+  <!-- Back kelp strands (darker, more opacity) -->
+  <path d="M30 300 Q20 250 35 200 Q50 150 30 100 Q15 60 40 20"
+        fill="none" stroke="#2d5a3d" stroke-width="12" stroke-linecap="round" opacity="0.5"/>
+  <path d="M370 300 Q380 240 365 180 Q350 130 375 70 Q390 30 360 0"
+        fill="none" stroke="#2d5a3d" stroke-width="10" stroke-linecap="round" opacity="0.5"/>
+
+  <!-- Middle kelp forest -->
+  <path d="M80 300 Q70 240 90 180 Q110 120 85 60 Q65 20 95 0"
+        fill="none" stroke="url(#kelp1)" stroke-width="14" stroke-linecap="round" opacity="0.7"/>
+  <path d="M320 300 Q335 230 310 160 Q285 100 320 40 Q340 0 315 0"
+        fill="none" stroke="url(#kelp1)" stroke-width="12" stroke-linecap="round" opacity="0.7"/>
+
+  <!-- Main front kelp strands -->
+  <path d="M150 300 Q130 240 160 180 Q190 120 150 60 Q120 20 170 0"
+        fill="none" stroke="url(#kelp2)" stroke-width="18" stroke-linecap="round"/>
+  <path d="M200 300 Q220 230 190 160 Q160 100 210 40 Q240 0 200 0"
+        fill="none" stroke="url(#kelp2)" stroke-width="16" stroke-linecap="round"/>
+  <path d="M250 300 Q240 250 260 190 Q280 130 250 70 Q225 25 270 0"
+        fill="none" stroke="url(#kelp2)" stroke-width="18" stroke-linecap="round"/>
+
+  <!-- Kelp bladders/leaves -->
+  <ellipse cx="165" cy="140" rx="12" ry="5" fill="#8fbc8f" opacity="0.6" transform="rotate(-25 165 140)"/>
+  <ellipse cx="145" cy="200" rx="10" ry="4" fill="#8fbc8f" opacity="0.5" transform="rotate(20 145 200)"/>
+  <ellipse cx="185" cy="100" rx="8" ry="3" fill="#8fbc8f" opacity="0.5" transform="rotate(-15 185 100)"/>
+  <ellipse cx="210" cy="180" rx="11" ry="4" fill="#8fbc8f" opacity="0.6" transform="rotate(30 210 180)"/>
+  <ellipse cx="195" cy="240" rx="9" ry="4" fill="#8fbc8f" opacity="0.5" transform="rotate(-20 195 240)"/>
+  <ellipse cx="240" cy="130" rx="10" ry="4" fill="#8fbc8f" opacity="0.6" transform="rotate(15 240 130)"/>
+  <ellipse cx="265" cy="200" rx="12" ry="5" fill="#8fbc8f" opacity="0.6" transform="rotate(-25 265 200)"/>
+  <ellipse cx="255" cy="50" rx="7" ry="3" fill="#8fbc8f" opacity="0.4" transform="rotate(10 255 50)"/>
+
+  <!-- Small fish -->
+  <g transform="translate(100, 120) scale(0.8)" opacity="0.6">
+    <ellipse cx="0" cy="0" rx="12" ry="6" fill="#7a9e97"/>
+    <path d="M12 0 L20 -6 L20 6 Z" fill="#7a9e97"/>
+    <circle cx="-6" cy="-1" r="1.5" fill="#0a1a1f"/>
+  </g>
+  <g transform="translate(300, 200) scale(0.6)" opacity="0.5">
+    <ellipse cx="0" cy="0" rx="12" ry="6" fill="#7a9e97"/>
+    <path d="M12 0 L20 -6 L20 6 Z" fill="#7a9e97"/>
+    <circle cx="-6" cy="-1" r="1.5" fill="#0a1a1f"/>
+  </g>
+  <g transform="translate(70, 220) scale(0.5)" opacity="0.4">
+    <ellipse cx="0" cy="0" rx="12" ry="6" fill="#7a9e97"/>
+    <path d="M12 0 L20 -6 L20 6 Z" fill="#7a9e97"/>
+    <circle cx="-6" cy="-1" r="1.5" fill="#0a1a1f"/>
+  </g>
+
+  <!-- Sea floor sand/rocks hint -->
+  <ellipse cx="100" cy="295" rx="40" ry="8" fill="#2a4a4a" opacity="0.4"/>
+  <ellipse cx="200" cy="298" rx="60" ry="6" fill="#2a4a4a" opacity="0.3"/>
+  <ellipse cx="320" cy="294" rx="45" ry="9" fill="#2a4a4a" opacity="0.4"/>
+</svg>

@@ -562,19 +562,24 @@ footer {
 }
 
 /* Empty / No selection states */
-.empty-state,
+.empty-state {
+    flex: 1;
+    min-height: calc(100vh - 200px);
+    display: flex;
+    align-items: flex-end;
+}
+
+.empty-state-bg {
+    width: 100%;
+    height: auto;
+    opacity: 0.5;
+    filter: grayscale(1);
+}
+
 .no-selection {
     text-align: center;
     padding: 3rem;
     color: var(--text-secondary);
-}
-
-.empty-state .example {
-    font-family: monospace;
-    font-size: 0.85rem;
-    margin-top: 1rem;
-    color: var(--text-secondary);
-    opacity: 0.7;
 }
 
 .no-events {

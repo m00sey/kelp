@@ -19,7 +19,7 @@ data "digitalocean_ssh_key" "default" {
 resource "digitalocean_droplet" "kelp" {
   name     = "kelp"
   region   = var.region
-  size     = "s-1vcpu-512mb-10gb"
+  size     = "s-1vcpu-1gb"
   image    = "ubuntu-24-04-x64"
   ssh_keys = [data.digitalocean_ssh_key.default.id]
 
@@ -46,7 +46,7 @@ resource "digitalocean_firewall" "kelp" {
   inbound_rule {
     protocol         = "tcp"
     port_range       = "22"
-    source_addresses = ["0.0.0.0/0", "::/0"]
+    source_addresses = var.ssh_allowed_cidrs
   }
 
   inbound_rule {

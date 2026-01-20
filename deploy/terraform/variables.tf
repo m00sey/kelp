@@ -26,3 +26,9 @@ variable "domain" {
   type        = string
   default     = "vroblok.io"
 }
+
+variable "ssh_allowed_cidrs" {
+  description = "CIDR blocks allowed to SSH (e.g., [\"1.2.3.4/32\"] for single IP)"
+  type        = list(string)
+  default     = ["0.0.0.0/0", "::/0"]  # Open by default, override in tfvars
+}
