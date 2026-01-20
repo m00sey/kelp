@@ -100,9 +100,15 @@ footer {
     white-space: nowrap;
 }
 
+.input-wrapper {
+    flex: 1;
+    position: relative;
+    display: flex;
+}
+
 .oobi-input input {
     flex: 1;
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 2.5rem 0.5rem 1rem;
     border: 1px solid var(--border-color);
     border-radius: 4px;
     background: var(--bg-primary);
@@ -114,6 +120,26 @@ footer {
 .oobi-input input:focus {
     outline: none;
     border-color: var(--accent-primary);
+}
+
+.clear-btn {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    line-height: 1;
+    opacity: 0.6;
+}
+
+.clear-btn:hover {
+    opacity: 1;
+    color: var(--text-primary);
 }
 
 .oobi-input button {

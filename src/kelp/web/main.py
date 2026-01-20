@@ -215,6 +215,21 @@ def create_app() -> FastAPI:
             },
         )
 
+    @app.post("/clear", response_class=HTMLResponse)
+    async def clear_events(request: Request):
+        """Clear loaded events and return to empty state."""
+        state["events"] = []
+        state["source_url"] = ""
+        state["selected_index"] = 0
+        state["is_witness"] = False
+        state["show_all_aids"] = False
+        state["url_aid"] = None
+
+        return templates.TemplateResponse(
+            "partials/main_content.html",
+            {"request": request, "events": []},
+        )
+
     return app
 
 

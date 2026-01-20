@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 FROM python:3.12-slim
 
 WORKDIR /app
@@ -14,9 +15,9 @@ RUN pip install uv
 COPY pyproject.toml .
 COPY src/ src/
 
-# Install dependencies (increased timeout for slower networks)
+# Install dependencies (cached, increased timeout for slower networks)
 ENV UV_HTTP_TIMEOUT=120
-RUN uv pip install --system .
+RUN --mount=type=cache,target=/root/.cache/uv uv pip install --system .
 
 # Create non-root user and switch to it
 RUN useradd --create-home --shell /bin/bash appuser
