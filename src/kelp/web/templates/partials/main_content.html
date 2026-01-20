@@ -11,6 +11,16 @@
     <button hx-get="/events?filter_type=ixn" hx-target="#event-list" class="{% if filter_type == 'ixn' %}active{% endif %}">ixn</button>
     <button hx-get="/events?filter_type=dip" hx-target="#event-list" class="{% if filter_type == 'dip' %}active{% endif %}">dip</button>
     <button hx-get="/events?filter_type=drt" hx-target="#event-list" class="{% if filter_type == 'drt' %}active{% endif %}">drt</button>
+    <span class="filter-separator"></span>
+    <input type="text"
+           class="jq-filter"
+           name="jq_filter"
+           placeholder="jq filter: select(.s > 5)"
+           value="{{ jq_filter|default('', true) }}"
+           hx-get="/events"
+           hx-target="#event-list"
+           hx-trigger="keyup changed delay:300ms, search"
+           hx-include="[name='jq_filter']">
     {% if is_witness %}
     <span class="filter-separator"></span>
     <button hx-post="/toggle-all-aids" hx-target="#main-content" hx-swap="innerHTML" class="toggle-aids {% if show_all_aids %}active{% endif %}">

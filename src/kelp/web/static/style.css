@@ -197,6 +197,28 @@ footer {
     margin: 0 0.5rem;
 }
 
+.jq-filter {
+    flex: 1;
+    max-width: 300px;
+    padding: 0.25rem 0.5rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    color: var(--text-primary);
+    font-family: monospace;
+    font-size: 0.85rem;
+}
+
+.jq-filter:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+}
+
+.jq-filter::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.6;
+}
+
 .filter-bar .toggle-aids {
     margin-left: auto;
     background: var(--bg-secondary);

@@ -1,11 +1,11 @@
-# syntax=docker/dockerfile:1
 FROM python:3.12-slim
 
 WORKDIR /app
 
-# Install system dependencies (libsodium for keri/pysodium)
+# Install system dependencies (libsodium for keri/pysodium, jq for filtering)
 RUN apt-get update && apt-get install -y \
     libsodium-dev \
+    jq \
     && rm -rf /var/lib/apt/lists/*
 
 # Install uv for fast dependency management
@@ -17,7 +17,7 @@ COPY src/ src/
 
 # Install dependencies (cached, increased timeout for slower networks)
 ENV UV_HTTP_TIMEOUT=120
-RUN --mount=type=cache,target=/root/.cache/uv uv pip install --system .
+RUN uv pip install --system .
 
 # Create non-root user and switch to it
 RUN useradd --create-home --shell /bin/bash appuser

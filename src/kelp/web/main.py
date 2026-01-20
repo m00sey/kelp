@@ -1,6 +1,7 @@
 """FastAPI application for KELP web UI."""
 
 import json
+import subprocess
 from pathlib import Path
 
 from fastapi import FastAPI, Form, Request
@@ -9,6 +10,22 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from kelp.sources.oobi import OOBIFetchError, OOBISource
+
+
+def jq_filter_match(jq_expr: str, data: dict) -> bool:
+    """Check if data matches a jq filter expression."""
+    try:
+        result = subprocess.run(
+            ["jq", "-e", jq_expr],
+            input=json.dumps(data),
+            capture_output=True,
+            text=True,
+            timeout=1,
+        )
+        # -e flag makes jq exit with 1 if result is false/null
+        return result.returncode == 0
+    except (subprocess.TimeoutExpired, FileNotFoundError):
+        return False
 
 # Paths
 WEB_DIR = Path(__file__).parent
@@ -112,6 +129,7 @@ def create_app() -> FastAPI:
     @app.post("/load", response_class=HTMLResponse)
     async def load_oobi(request: Request, oobi_url: str = Form(...)):
         """Load events from an OOBI URL."""
+        oobi_url = oobi_url.strip()
         try:
             source = OOBISource(oobi_url)
             events = await source.fetch_events()
@@ -171,11 +189,23 @@ def create_app() -> FastAPI:
         )
 
     @app.get("/events", response_class=HTMLResponse)
-    async def get_events(request: Request, filter_type: str | None = None):
+    async def get_events(
+        request: Request,
+        filter_type: str | None = None,
+        jq_filter: str | None = None,
+    ):
         """Get filtered event list."""
         events = _get_display_events()
         if filter_type and filter_type != "all":
             events = [e for e in events if e.type == filter_type]
+
+        # Apply jq filter if provided
+        if jq_filter and jq_filter.strip():
+            filtered = []
+            for event in events:
+                if jq_filter_match(jq_filter, event.data):
+                    filtered.append(event)
+            events = filtered
 
         is_witness = state["is_witness"]
         return templates.TemplateResponse(
@@ -188,6 +218,7 @@ def create_app() -> FastAPI:
                 "show_all_aids": state["show_all_aids"],
                 "selected_index": state["selected_index"],
                 "filter_type": filter_type or "all",
+                "jq_filter": jq_filter or "",
             },
         )
 
