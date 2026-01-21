@@ -1,0 +1,21 @@
+{% include "partials/tab_bar.html" %}
+
+<section class="oobi-input">
+    <form hx-post="/load" hx-target="#main-content" hx-swap="innerHTML">
+        <label for="oobi_url">OOBI URL:</label>
+        <div class="input-wrapper">
+            <input type="text"
+                   id="oobi_url"
+                   name="oobi_url"
+                   value="{{ source_url }}"
+                   placeholder="http://host:port/oobi/AID/witness"
+                   required>
+            <button type="button" class="clear-btn" hx-post="/clear" hx-target="#main-content" hx-swap="innerHTML" onclick="document.getElementById('oobi_url').value=''">&times;</button>
+        </div>
+        <button type="submit">Load</button>
+    </form>
+</section>
+
+<div id="main-content">
+    {% include "partials/main_content.html" %}
+</div>

@@ -1,0 +1,21 @@
+{% include "partials/main_content.html" %}
+
+{# OOB swap to update tab bar (tab name changes on load/clear) #}
+<div class="tab-bar" id="tab-bar" hx-swap-oob="true">
+    <div class="tab-list">
+        {% for tab in tabs %}
+        <div class="tab {% if tab.id == active_tab_id %}active{% endif %}"
+             hx-get="/tab/{{ tab.id }}"
+             hx-target="#tab-content">
+            <span class="tab-name">{{ tab.name }}{% if tab.max_sequence is not none %} ({{ tab.max_sequence }}){% endif %}</span>
+            {% if tabs|length > 1 %}
+            <button class="tab-close"
+                    hx-post="/tab/{{ tab.id }}/close"
+                    hx-target="#tab-content"
+                    onclick="event.stopPropagation()">&times;</button>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    <button class="tab-new" hx-post="/tab/new" hx-target="#tab-content">+</button>
+</div>
