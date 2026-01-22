@@ -220,6 +220,177 @@ footer {
     opacity: 0.6;
 }
 
+/* jq Editor Popover */
+.jq-editor-container {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.jq-editor-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.jq-editor-toggle:hover {
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: white;
+}
+
+.jq-editor-popover {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    z-index: 100;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.jq-editor-popover.open {
+    display: block;
+}
+
+.jq-editor-content {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    width: 50vw;
+    min-width: 500px;
+    max-width: 800px;
+}
+
+.jq-editor-input-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 220px;
+}
+
+.jq-editor-label {
+    font-weight: 500;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+}
+
+.jq-editor-textarea {
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    color: var(--text-primary);
+    font-family: monospace;
+    font-size: 0.9rem;
+    resize: vertical;
+    min-height: 100px;
+}
+
+.jq-editor-textarea:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+}
+
+.jq-editor-textarea::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.6;
+}
+
+.jq-editor-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.jq-editor-apply {
+    flex: 1;
+    padding: 0.5rem 1rem;
+    background: var(--accent-primary);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.85rem;
+    transition: background 0.15s;
+}
+
+.jq-editor-apply:hover {
+    background: #3d6a4a;
+}
+
+.jq-editor-clear {
+    padding: 0.5rem 1rem;
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.15s;
+}
+
+.jq-editor-clear:hover {
+    border-color: var(--error);
+    color: var(--error);
+}
+
+.jq-editor-guide {
+    width: 240px;
+    padding-left: 1rem;
+    border-left: 1px solid var(--border-color);
+}
+
+.jq-help-title {
+    font-weight: 600;
+    color: var(--accent-secondary);
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.9rem;
+}
+
+.jq-help-section {
+    margin-bottom: 0.75rem;
+    font-size: 0.8rem;
+    line-height: 1.6;
+}
+
+.jq-help-section:last-child {
+    margin-bottom: 0;
+}
+
+.jq-help-label {
+    color: var(--text-secondary);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+}
+
+.jq-editor-guide code {
+    background: var(--bg-primary);
+    padding: 0.1rem 0.35rem;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    color: var(--accent-secondary);
+}
+
 .filter-bar .toggle-aids {
     margin-left: auto;
     background: var(--bg-secondary);
@@ -688,7 +859,7 @@ footer {
     gap: 0.5rem;
     background: var(--bg-secondary);
     padding: 0.5rem 1rem 0 1rem;
-    border-radius: 0;
+    border-radius: 8px 8px 0 0;
     border: 1px solid var(--border-color);
 }
 

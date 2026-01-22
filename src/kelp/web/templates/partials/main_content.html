@@ -21,6 +21,57 @@
            hx-target="#event-list"
            hx-trigger="keyup changed delay:300ms, search"
            hx-include="[name='jq_filter']">
+    <div class="jq-editor-container">
+        <button type="button" class="jq-editor-toggle" onclick="toggleJqEditor()">?</button>
+        <div class="jq-editor-popover" id="jq-editor-popover">
+            <div class="jq-editor-content">
+                <div class="jq-editor-input-section">
+                    <label class="jq-editor-label">jq Filter</label>
+                    <textarea class="jq-editor-textarea"
+                              id="jq-editor-textarea"
+                              placeholder="select(.s > 5)"
+                              rows="4"></textarea>
+                    <div class="jq-editor-actions">
+                        <button type="button" class="jq-editor-apply" onclick="applyJqFilter()">Apply Filter</button>
+                        <button type="button" class="jq-editor-clear" onclick="clearJqFilter()">Clear</button>
+                    </div>
+                </div>
+                <div class="jq-editor-guide">
+                    <div class="jq-help-title">jq Syntax Guide</div>
+                    <div class="jq-help-section">
+                        <div class="jq-help-label">Comparisons</div>
+                        <code>select(.s > 5)</code> sequence &gt; 5<br>
+                        <code>select(.s == 0)</code> inception events<br>
+                        <code>select(.t == "ixn")</code> interactions only
+                    </div>
+                    <div class="jq-help-section">
+                        <div class="jq-help-label">String matching</div>
+                        <code>select(.i | startswith("E"))</code><br>
+                        <code>select(.i | contains("abc"))</code>
+                    </div>
+                    <div class="jq-help-section">
+                        <div class="jq-help-label">Arrays</div>
+                        <code>select(.k | length > 1)</code> multi-sig<br>
+                        <code>select(.b | length > 0)</code> has witnesses<br>
+                        <code>select(any(.a[]?; .i | contains("EJ4H")))</code> anchor AID
+                    </div>
+                    <div class="jq-help-section">
+                        <div class="jq-help-label">Combine conditions</div>
+                        <code>select(.s > 0 and .t == "rot")</code>
+                    </div>
+                    <div class="jq-help-section">
+                        <div class="jq-help-label">Common fields</div>
+                        <code>.i</code> identifier (AID)<br>
+                        <code>.s</code> sequence (use decimal, not hex)<br>
+                        <code>.t</code> event type<br>
+                        <code>.k</code> keys array<br>
+                        <code>.b</code> witnesses array<br>
+                        <code>.di</code> delegator (if delegated)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     {% if is_witness %}
     <span class="filter-separator"></span>
     <button hx-post="/toggle-all-aids" hx-target="#main-content" hx-swap="innerHTML" class="toggle-aids {% if show_all_aids %}active{% endif %}">

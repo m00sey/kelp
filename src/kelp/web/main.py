@@ -91,11 +91,23 @@ def _tab_name_from_url(url: str) -> str:
 
 
 def jq_filter_match(jq_expr: str, data: dict) -> bool:
-    """Check if data matches a jq filter expression."""
+    """Check if data matches a jq filter expression.
+
+    Converts the 's' (sequence) field from hex string to integer
+    for easier filtering (e.g., select(.s > 5) just works).
+    """
+    # Create a copy with .s converted from hex to int for filtering
+    filter_data = data.copy()
+    if "s" in filter_data and isinstance(filter_data["s"], str):
+        try:
+            filter_data["s"] = int(filter_data["s"], 16)
+        except ValueError:
+            pass  # Keep original if conversion fails
+
     try:
         result = subprocess.run(
             ["jq", "-e", jq_expr],
-            input=json.dumps(data),
+            input=json.dumps(filter_data),
             capture_output=True,
             text=True,
             timeout=1,

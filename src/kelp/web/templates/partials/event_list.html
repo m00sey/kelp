@@ -45,3 +45,10 @@
 {% endfor %}
 </ul>
 {% endif %}
+
+{% if not events %}
+{# OOB swap to clear event detail when no events match #}
+<div id="event-detail" hx-swap-oob="innerHTML">
+    <p class="no-selection">No events match the filter</p>
+</div>
+{% endif %}
