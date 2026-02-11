@@ -7,11 +7,12 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from urllib.parse import urlparse
 
-from fastapi import FastAPI, Form, Request
+from fastapi import FastAPI, File, Form, Request, UploadFile
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
+from kelp.cesr.parser import CESRParser
 from kelp.sources.oobi import OOBIFetchError, OOBISource
 
 
@@ -27,6 +28,7 @@ class TabState:
     is_witness: bool = False
     show_all_aids: bool = False
     url_aid: str | None = None
+    is_upload: bool = False  # Track if this tab loaded from file upload
 
     @property
     def max_sequence(self) -> int | None:
@@ -53,7 +55,7 @@ class AppState:
     def create_tab(self, name: str = "New Tab") -> TabState:
         """Create a new tab and make it active."""
         tab_id = str(uuid.uuid4())[:8]
-        tab = TabState(id=tab_id, name=name)
+        tab = TabState(id=tab_id, name=name, is_upload=False)
         self.tabs[tab_id] = tab
         self.tab_order.append(tab_id)
         self.active_tab_id = tab_id
@@ -116,6 +118,9 @@ def jq_filter_match(jq_expr: str, data: dict) -> bool:
         return result.returncode == 0
     except (subprocess.TimeoutExpired, FileNotFoundError):
         return False
+
+# File upload settings
+MAX_UPLOAD_SIZE = 50 * 1024 * 1024  # 50MB
 
 # Paths
 WEB_DIR = Path(__file__).parent
@@ -198,6 +203,7 @@ def create_app() -> FastAPI:
             "show_all_aids": tab.show_all_aids,
             "url_aid": tab.url_aid,
             "source_url": tab.source_url,
+            "is_upload": tab.is_upload,
             "selected_index": tab.selected_index,
             "selected_event": (
                 display_events[tab.selected_index]
@@ -238,6 +244,7 @@ def create_app() -> FastAPI:
             tab.show_all_aids = False
             tab.url_aid = source.identifier
             tab.name = _tab_name_from_url(oobi_url)
+            tab.is_upload = False
 
             # Get filtered display events
             display_events = _get_display_events(tab)
@@ -259,6 +266,51 @@ def create_app() -> FastAPI:
             return templates.TemplateResponse(
                 "partials/error.html",
                 {"request": request, "error": str(e)},
+            )
+
+    @app.post("/upload", response_class=HTMLResponse)
+    async def upload_kel(request: Request, kel_file: UploadFile = File(...)):
+        """Upload a KEL file and load events into the active tab."""
+        tab = state.get_active_tab()
+
+        try:
+            # Check file size
+            content = await kel_file.read()
+            if len(content) > MAX_UPLOAD_SIZE:
+                raise ValueError(f"File too large: {len(content)} bytes (max: {MAX_UPLOAD_SIZE})")
+
+            # Parse CESR content
+            parser = CESRParser()
+            events = parser.parse(content)
+
+            if not events:
+                raise ValueError("No events found in uploaded file")
+
+            # Update tab state (similar to OOBI load)
+            tab.events = sorted(events, key=lambda e: e.sequence)
+            tab.source_url = f"Uploaded: {kel_file.filename}"
+            tab.selected_index = 0
+            tab.is_upload = True
+
+            # Detect if this looks like a witness KEL (multiple AIDs)
+            unique_aids = set(e.identifier for e in events if e.identifier)
+            tab.is_witness = len(unique_aids) > 1
+            tab.show_all_aids = False
+            tab.url_aid = list(unique_aids)[0] if unique_aids else None
+            tab.name = kel_file.filename or "Uploaded KEL"
+
+            display_events = _get_display_events(tab)
+            context = _get_tab_context(tab, request)
+            context["message"] = f"Uploaded {len(display_events)} events from {kel_file.filename}"
+
+            return templates.TemplateResponse(
+                "partials/main_content_with_tab_bar.html",
+                context,
+            )
+        except Exception as e:
+            return templates.TemplateResponse(
+                "partials/error.html",
+                {"request": request, "error": f"Upload failed: {str(e)}"},
             )
 
     @app.get("/event/{index}", response_class=HTMLResponse)
@@ -334,6 +386,7 @@ def create_app() -> FastAPI:
         tab.show_all_aids = False
         tab.url_aid = None
         tab.name = "New Tab"
+        tab.is_upload = False
 
         return templates.TemplateResponse(
             "partials/main_content_with_tab_bar.html",

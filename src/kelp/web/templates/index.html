@@ -5,18 +5,36 @@
     {% include "partials/tab_bar.html" %}
 
     <section class="oobi-input">
-        <form hx-post="/load" hx-target="#main-content" hx-swap="innerHTML">
+        <!-- Mode toggle -->
+        <div class="load-mode-toggle">
+            <button type="button" class="mode-btn {% if not (is_upload|default(false)) %}active{% endif %}" data-mode="url">Load from URL</button>
+            <button type="button" class="mode-btn {% if is_upload|default(false) %}active{% endif %}" data-mode="upload">Upload File</button>
+        </div>
+
+        <!-- URL form (existing) -->
+        <form id="url-form" class="load-form {% if not (is_upload|default(false)) %}active{% endif %}" hx-post="/load" hx-target="#main-content" hx-swap="innerHTML">
             <label for="oobi_url">OOBI URL:</label>
             <div class="input-wrapper">
                 <input type="text"
                        id="oobi_url"
                        name="oobi_url"
-                       value="{{ source_url }}"
+                       value="{% if not (is_upload|default(false)) %}{{ source_url }}{% endif %}"
                        placeholder="http://host:port/oobi/AID/witness"
                        required>
                 <button type="button" class="clear-btn" hx-post="/clear" hx-target="#main-content" hx-swap="innerHTML" onclick="document.getElementById('oobi_url').value=''">&times;</button>
             </div>
             <button type="submit">Load</button>
+        </form>
+
+        <!-- Upload form (new) -->
+        <form id="upload-form" class="load-form {% if is_upload|default(false) %}active{% endif %}" hx-post="/upload" hx-target="#main-content" hx-swap="innerHTML" hx-encoding="multipart/form-data">
+            <label for="kel_file">KEL File:</label>
+            <input type="file"
+                   id="kel_file"
+                   name="kel_file"
+                   accept=".cesr,.kel,.txt,.json,text/*,application/octet-stream"
+                   required>
+            <button type="submit">Upload</button>
         </form>
     </section>
 
