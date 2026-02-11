@@ -7,6 +7,14 @@
     <link rel="icon" type="image/svg+xml" href="/static/logo.svg">
     <script src="https://unpkg.com/htmx.org@2.0.4"></script>
     <link rel="stylesheet" href="/static/style.css">
+    <script>
+        // Set theme immediately to prevent flash
+        (function() {
+            const stored = localStorage.getItem('kelp-theme');
+            const theme = stored || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
     <script src="/static/app.js"></script>
 </head>
 <body>
@@ -14,6 +22,10 @@
         <img src="/static/logo.svg" alt="KELP" class="logo">
         <h1>KELP</h1>
         <span class="subtitle">Key Event Log Parser</span>
+        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark theme">
+            <svg class="theme-icon theme-icon-moon" id="theme-icon-moon" viewBox="0 0 24 24"><path d="M12 3c.13 0 .26.02.39.04a1 1 0 0 1 .52 1.71 6 6 0 0 0 6.34 9.86 1 1 0 0 1 1.32 1.25A9 9 0 1 1 11.74 3.1c.09-.06.17-.1.26-.1z"/></svg>
+            <svg class="theme-icon theme-icon-sun" id="theme-icon-sun" viewBox="0 0 24 24"><path d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0-5a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0V3a1 1 0 0 1 1-1zm0 18a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0v-2a1 1 0 0 1 1-1zm9-9a1 1 0 0 1-1 1h-2a1 1 0 1 1 0-2h2a1 1 0 0 1 1 1zM6 12a1 1 0 0 1-1 1H3a1 1 0 1 1 0-2h2a1 1 0 0 1 1 1zm12.36-5.64a1 1 0 0 1 0 1.41l-1.41 1.41a1 1 0 1 1-1.42-1.41l1.42-1.41a1 1 0 0 1 1.41 0zM8.46 15.54a1 1 0 0 1 0 1.41l-1.41 1.41a1 1 0 1 1-1.41-1.41l1.41-1.41a1 1 0 0 1 1.41 0zm9.9 2.82a1 1 0 0 1-1.42 0l-1.41-1.41a1 1 0 1 1 1.41-1.42l1.41 1.42a1 1 0 0 1 0 1.41zM8.46 8.46a1 1 0 0 1-1.41 0L5.64 7.05a1 1 0 0 1 1.41-1.41l1.41 1.41a1 1 0 0 1 0 1.41z"/></svg>
+        </button>
     </header>
 
     <main>

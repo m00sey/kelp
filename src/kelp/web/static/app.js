@@ -1,5 +1,41 @@
 /* KELP - Key Event Log Parser - Application JavaScript */
 
+// Theme toggle functionality
+function getPreferredTheme() {
+    const stored = localStorage.getItem('kelp-theme');
+    if (stored) return stored;
+    return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+}
+
+function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('kelp-theme', theme);
+}
+
+function toggleTheme() {
+    const current = document.documentElement.getAttribute('data-theme') || 'dark';
+    const next = current === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+}
+
+// Initialize theme on page load
+(function() {
+    setTheme(getPreferredTheme());
+})();
+
+// Filter bar button active state - use event delegation
+document.addEventListener('click', function(e) {
+    const btn = e.target.closest('.filter-bar button[hx-get*="filter_type"]');
+    if (btn) {
+        // Remove active from all filter buttons
+        document.querySelectorAll('.filter-bar button[hx-get*="filter_type"]').forEach(b => {
+            b.classList.remove('active');
+        });
+        // Add active to clicked button
+        btn.classList.add('active');
+    }
+});
+
 // Copy raw CESR to clipboard
 function copyRawCesr(btn) {
     const raw = btn.dataset.raw;

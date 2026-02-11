@@ -1,22 +1,43 @@
 /* KELP - Key Event Log Parser */
 /* GLEIF Brand Colors */
 
-:root {
-    /* Core - Cyprus teal backgrounds */
+/* Dark theme (default) */
+:root, [data-theme="dark"] {
     --bg-primary: #001a1c;
     --bg-secondary: #002528;
     --bg-tertiary: #003336;
-    /* Text */
     --text-primary: #FFFFFF;
-    --text-secondary: #6A7B7F; /* Smoke */
-    /* Accents - Turquoise & Jade */
+    --text-secondary: #9AABAF;
     --accent-primary: #28999C; /* Jade */
     --accent-secondary: #51DAC5; /* Turquoise */
-    /* Extended palette */
     --border-color: #004548;
     --success: #28999C; /* Jade */
     --warning: #FFA300; /* Honey */
     --error: #DC1A45; /* Lava */
+    --hover-bg: #004548;
+    /* Additional GLEIF colors */
+    --azure: #19A5FF;
+    --amber: #FF6845;
+    --damson: #403E78;
+    --lavender: #7764B1;
+    --cloud: #E5DCE6;
+    --shell: #CCAEA4;
+}
+
+/* Light theme */
+[data-theme="light"] {
+    --bg-primary: #FFFFFF;
+    --bg-secondary: #F5F7F7;
+    --bg-tertiary: #E8EDEE;
+    --text-primary: #003336; /* Cyprus */
+    --text-secondary: #6A7B7F; /* Smoke */
+    --accent-primary: #28999C; /* Jade */
+    --accent-secondary: #003336; /* Cyprus for contrast */
+    --border-color: #D0D8DA;
+    --success: #28999C; /* Jade */
+    --warning: #FFA300; /* Honey */
+    --error: #DC1A45; /* Lava */
+    --hover-bg: #E0E5E6;
     /* Additional GLEIF colors */
     --azure: #19A5FF;
     --amber: #FF6845;
@@ -194,7 +215,7 @@ footer {
 
 .mode-btn.active {
     color: var(--text-primary);
-    border-bottom-color: var(--accent-secondary);
+    border-bottom-color: var(--accent-primary);
     opacity: 1;
     font-weight: 500;
 }
@@ -309,12 +330,13 @@ footer {
 }
 
 .filter-bar button:hover {
-    border-color: var(--accent-secondary);
+    border-color: var(--accent-primary);
 }
 
 .filter-bar button.active {
-    background: var(--accent-secondary);
-    border-color: var(--accent-secondary);
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: #FFFFFF;
 }
 
 .filter-separator {
@@ -705,7 +727,7 @@ footer {
 }
 
 .aid-header:hover {
-    background: #004548;
+    background: var(--hover-bg);
 }
 
 .aid-group[open] > .aid-header {
@@ -1070,6 +1092,127 @@ footer {
 .tab-new:hover {
     color: var(--accent-primary);
     background: var(--bg-tertiary);
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+    margin-left: auto;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.4rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    transition: all 0.2s;
+}
+
+.theme-toggle:hover {
+    border-color: var(--accent-primary);
+    background: var(--hover-bg);
+}
+
+.theme-icon {
+    width: 20px;
+    height: 20px;
+    fill: var(--text-primary);
+    transition: transform 0.2s;
+}
+
+.theme-toggle:hover .theme-icon {
+    transform: scale(1.1);
+}
+
+/* Dark mode: show moon, hide sun */
+[data-theme="dark"] .theme-icon-moon,
+:root .theme-icon-moon {
+    display: block;
+}
+
+[data-theme="dark"] .theme-icon-sun,
+:root .theme-icon-sun {
+    display: none;
+}
+
+/* Light mode: show sun, hide moon */
+[data-theme="light"] .theme-icon-sun {
+    display: block;
+}
+
+[data-theme="light"] .theme-icon-moon {
+    display: none;
+}
+
+/* Light theme adjustments for event types */
+[data-theme="light"] .type-icp { color: #1a8a7f; }
+[data-theme="light"] .type-rot { color: #cc8200; }
+[data-theme="light"] .type-ixn { color: #0d7acc; }
+[data-theme="light"] .type-dip { color: #5a4a8a; }
+[data-theme="light"] .type-drt { color: #b01538; }
+[data-theme="light"] .type-rct { color: #1f7a7d; }
+[data-theme="light"] .type-qry { color: #1a8a7f; }
+[data-theme="light"] .type-rpy { color: #0d7acc; }
+[data-theme="light"] .type-pro { color: #cc8200; }
+[data-theme="light"] .type-bar { color: #5a6a6d; }
+[data-theme="light"] .type-exn { color: #d94a2b; }
+
+/* Light theme adjustments for better contrast */
+[data-theme="light"] .full-value {
+    color: #1f7a7d;
+}
+
+[data-theme="light"] .aid-full {
+    color: #1f7a7d;
+}
+
+[data-theme="light"] .attachment-type {
+    color: #1f7a7d;
+}
+
+[data-theme="light"] .jq-editor-guide code {
+    color: #1f7a7d;
+}
+
+[data-theme="light"] header h1 {
+    color: #003336;
+}
+
+[data-theme="light"] .version-badge.version-1 {
+    border-left-color: #1f7a7d;
+}
+
+[data-theme="light"] .event-item.version-1 {
+    border-left-color: #1f7a7d;
+}
+
+/* Light theme scrollbar */
+[data-theme="light"] ::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+    background: #C0C8CA;
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+    background: #A0A8AA;
+}
+
+/* Light theme button adjustments */
+[data-theme="light"] .oobi-input button,
+[data-theme="light"] .jq-editor-apply {
+    color: #FFFFFF;
+}
+
+[data-theme="light"] .tab.active {
+    background: var(--bg-primary);
+}
+
+[data-theme="light"] .flat-list .aid-full {
+    color: #1f7a7d;
 }
 
 /* Responsive */
