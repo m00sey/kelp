@@ -50,6 +50,28 @@ function copyRawCesr(btn) {
     });
 }
 
+// Copy share link to clipboard
+function copyShareLink(btn) {
+    const sourceUrl = btn.dataset.url;
+    if (!sourceUrl) return;
+
+    // URL encode the OOBI URL
+    const encoded = encodeURIComponent(sourceUrl);
+
+    // Build the share URL
+    const shareUrl = `${window.location.origin}/?kel=${encoded}`;
+
+    navigator.clipboard.writeText(shareUrl).then(() => {
+        const originalText = btn.textContent;
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+            btn.textContent = originalText;
+            btn.classList.remove('copied');
+        }, 1500);
+    });
+}
+
 // jq Editor functions
 function toggleJqEditor() {
     const popover = document.getElementById('jq-editor-popover');

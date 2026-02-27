@@ -822,6 +822,29 @@ footer {
     border-color: var(--success);
 }
 
+/* Share button */
+.share-btn {
+    padding: 0.25rem 0.75rem;
+    background: var(--lavender);
+    color: white;
+    border: 1px solid var(--lavender);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.share-btn:hover {
+    background: #5a4a8a;
+    border-color: #5a4a8a;
+}
+
+.share-btn.copied {
+    background: var(--success);
+    border-color: var(--success);
+}
+
 /* Identifier row */
 .identifier-row {
     display: flex;

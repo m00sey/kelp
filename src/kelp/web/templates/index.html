@@ -39,6 +39,9 @@
     </section>
 
     <div id="main-content">
+        {% if share_error %}
+        <div class="error-message">{{ share_error }}</div>
+        {% endif %}
         {% include "partials/main_content.html" %}
     </div>
 </div>

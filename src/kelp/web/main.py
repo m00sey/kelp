@@ -5,7 +5,7 @@ import subprocess
 import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import unquote, urlparse
 
 from fastapi import FastAPI, File, Form, Request, UploadFile
 from fastapi.responses import HTMLResponse
@@ -214,16 +214,60 @@ def create_app() -> FastAPI:
             "active_tab_id": state.active_tab_id,
         }
 
+    async def _load_oobi_into_tab(tab: TabState, oobi_url: str) -> str | None:
+        """Load OOBI URL into a tab. Returns error message or None on success."""
+        try:
+            source = OOBISource(oobi_url)
+            events = await source.fetch_events()
+            await source.close()
+
+            tab.events = sorted(events, key=lambda e: e.sequence)
+            tab.source_url = oobi_url
+            tab.selected_index = 0
+            tab.is_witness = _is_witness_url(oobi_url)
+            tab.show_all_aids = False
+            tab.url_aid = source.identifier
+            tab.name = _tab_name_from_url(oobi_url)
+            tab.is_upload = False
+            return None
+        except OOBIFetchError as e:
+            return str(e)
+        except Exception as e:
+            return str(e)
+
     @app.get("/", response_class=HTMLResponse)
-    async def index(request: Request):
-        """Render the main page."""
+    async def index(request: Request, kel: str | None = None):
+        """Render the main page.
+
+        Args:
+            kel: Optional base64-encoded OOBI URL for link sharing.
+        """
         # Ensure at least one tab exists
         if not state.tabs:
             state.create_tab()
         tab = state.get_active_tab()
+
+        context = _get_tab_context(tab, request)
+
+        # Handle shared link parameter
+        if kel:
+            try:
+                # URL decode the OOBI URL
+                decoded_url = unquote(kel)
+                error = await _load_oobi_into_tab(tab, decoded_url)
+                if error:
+                    context["share_error"] = f"Failed to load shared link: {error}"
+                else:
+                    # Refresh context after loading
+                    context = _get_tab_context(tab, request)
+                    display_events = _get_display_events(tab)
+                    context["message"] = f"Loaded {len(display_events)} events from shared link"
+            except Exception as e:
+                context["share_error"] = f"Invalid shared link: {e}"
+
         return templates.TemplateResponse(
             "index.html",
-            _get_tab_context(tab, request),
+            context,
         )
 
     @app.post("/load", response_class=HTMLResponse)
