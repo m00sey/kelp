@@ -10,8 +10,8 @@ class DataSource(ABC):
     """Abstract base class for KEL data sources."""
 
     @abstractmethod
-    async def fetch_events(self, identifier: str | None = None) -> list[Event]:
-        """Fetch events, optionally filtered by identifier.
+    async def load_events(self, identifier: str | None = None) -> list[Event]:
+        """Load events, optionally filtered by identifier.
 
         Args:
             identifier: Optional AID to filter events by
@@ -23,7 +23,7 @@ class DataSource(ABC):
 
     @abstractmethod
     async def stream_events(self, identifier: str | None = None) -> AsyncIterator[Event]:
-        """Stream events as they are fetched.
+        """Stream events as they are loaded.
 
         Args:
             identifier: Optional AID to filter events by

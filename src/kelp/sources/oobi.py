@@ -1,4 +1,4 @@
-"""OOBI HTTP data source for fetching KELs from witnesses/watchers."""
+"""OOBI HTTP data source for loading KELs from witnesses/watchers."""
 
 import re
 from collections.abc import AsyncIterator
@@ -13,13 +13,13 @@ from .base import DataSource
 
 
 class OOBISource(DataSource):
-    """Data source that fetches KELs via OOBI endpoints."""
+    """Data source that loades KELs via OOBI endpoints."""
 
     def __init__(self, oobi_url: str, timeout: float = 30.0):
         """Initialize the OOBI data source.
 
         Args:
-            oobi_url: The OOBI URL to fetch from
+            oobi_url: The OOBI URL to load from
             timeout: HTTP request timeout in seconds
         """
         self.oobi_url = oobi_url
@@ -56,8 +56,8 @@ class OOBISource(DataSource):
             self._client = httpx.AsyncClient(timeout=self.timeout)
         return self._client
 
-    async def fetch_events(self, identifier: str | None = None) -> list[Event]:
-        """Fetch all events from the OOBI endpoint.
+    async def load_events(self, identifier: str | None = None) -> list[Event]:
+        """Load all events from the OOBI endpoint.
 
         Args:
             identifier: Optional AID to filter events. If not specified,
@@ -83,14 +83,14 @@ class OOBISource(DataSource):
             return events
 
         except httpx.HTTPStatusError as e:
-            raise OOBIFetchError(f"HTTP error fetching OOBI: {e.response.status_code}") from e
+            raise OOBILoadError(f"HTTP error loading OOBI: {e.response.status_code}") from e
         except httpx.RequestError as e:
-            raise OOBIFetchError(f"Request error fetching OOBI: {e}") from e
+            raise OOBILoadError(f"Request error loading OOBI: {e}") from e
 
     async def stream_events(self, identifier: str | None = None) -> AsyncIterator[Event]:
         """Stream events as they are parsed.
 
-        Note: For HTTP OOBI, this is not truly streaming - we fetch all
+        Note: For HTTP OOBI, this is not truly streaming - we load all
         data first, then yield events. True streaming would require SSE
         or WebSocket support.
 
@@ -100,7 +100,7 @@ class OOBISource(DataSource):
         Yields:
             Event objects
         """
-        events = await self.fetch_events(identifier)
+        events = await self.load_events(identifier)
         for event in events:
             yield event
 
@@ -119,7 +119,7 @@ class OOBISource(DataSource):
         await self.close()
 
 
-class OOBIFetchError(Exception):
-    """Error fetching from OOBI endpoint."""
+class OOBILoadError(Exception):
+    """Error loading from OOBI endpoint."""
 
     pass

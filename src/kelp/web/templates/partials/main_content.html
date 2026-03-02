@@ -6,6 +6,11 @@
 <div class="filter-bar">
     {% if source_url and not is_upload %}
     <button type="button" class="share-btn" onclick="copyShareLink(this)" data-url="{{ source_url }}">Share</button>
+    {% endif %}
+    {% if tabs|length > 1 %}
+    <button type="button" class="share-btn share-all-btn" onclick="copyShareAllLink()">Share All</button>
+    {% endif %}
+    {% if (source_url and not is_upload) or tabs|length > 1 %}
     <span class="filter-separator"></span>
     {% endif %}
     <span>Filter:</span>

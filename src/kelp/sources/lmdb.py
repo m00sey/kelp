@@ -27,8 +27,8 @@ class LMDBSource(DataSource):
         """Human-readable description of this data source."""
         return f"LMDB: {self.db_path.name}"
 
-    async def fetch_events(self, identifier: str | None = None) -> list[Event]:
-        """Fetch events from the LMDB database.
+    async def load_events(self, identifier: str | None = None) -> list[Event]:
+        """Load events from the LMDB database.
 
         Args:
             identifier: Optional AID to filter events by

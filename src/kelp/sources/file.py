@@ -26,7 +26,7 @@ class FileSource(DataSource):
         """Human-readable description of this data source."""
         return f"File: {self.file_path.name}"
 
-    async def fetch_events(self, identifier: str | None = None) -> list[Event]:
+    async def load_events(self, identifier: str | None = None) -> list[Event]:
         """Read and parse events from the CESR file.
 
         Args:
@@ -52,6 +52,6 @@ class FileSource(DataSource):
         Yields:
             Event objects
         """
-        events = await self.fetch_events(identifier)
+        events = await self.load_events(identifier)
         for event in events:
             yield event

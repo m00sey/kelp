@@ -3,7 +3,8 @@
         {% for tab in tabs %}
         <div class="tab {% if tab.id == active_tab_id %}active{% endif %}"
              hx-get="/tab/{{ tab.id }}"
-             hx-target="#tab-content">
+             hx-target="#tab-content"
+             data-source-url="{{ tab.source_url if not tab.is_upload else '' }}">
             <span class="tab-name">{{ tab.name }}{% if tab.max_sequence is not none %} ({{ tab.max_sequence }}){% endif %}</span>
             {% if tabs|length > 1 %}
             <button class="tab-close"

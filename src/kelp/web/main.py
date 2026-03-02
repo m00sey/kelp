@@ -7,13 +7,13 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from urllib.parse import unquote, urlparse
 
-from fastapi import FastAPI, File, Form, Request, UploadFile
+from fastapi import FastAPI, File, Form, Query, Request, UploadFile
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from kelp.cesr.parser import CESRParser
-from kelp.sources.oobi import OOBIFetchError, OOBISource
+from kelp.sources.oobi import OOBILoadError, OOBISource
 
 
 @dataclass
@@ -218,7 +218,7 @@ def create_app() -> FastAPI:
         """Load OOBI URL into a tab. Returns error message or None on success."""
         try:
             source = OOBISource(oobi_url)
-            events = await source.fetch_events()
+            events = await source.load_events()
             await source.close()
 
             tab.events = sorted(events, key=lambda e: e.sequence)
@@ -230,40 +230,60 @@ def create_app() -> FastAPI:
             tab.name = _tab_name_from_url(oobi_url)
             tab.is_upload = False
             return None
-        except OOBIFetchError as e:
+        except OOBILoadError as e:
             return str(e)
         except Exception as e:
             return str(e)
 
     @app.get("/", response_class=HTMLResponse)
-    async def index(request: Request, kel: str | None = None):
+    async def index(request: Request, kel: list[str] = Query(default=[])):
         """Render the main page.
 
         Args:
-            kel: Optional base64-encoded OOBI URL for link sharing.
+            kel: Optional URL-encoded OOBI URL(s) for link sharing.
+                 Can be repeated for multiple tabs (witness pool).
         """
         # Ensure at least one tab exists
         if not state.tabs:
             state.create_tab()
-        tab = state.get_active_tab()
 
+        errors = []
+        loaded_count = 0
+
+        # Handle shared link parameter(s)
+        if kel:
+            for i, encoded_url in enumerate(kel):
+                try:
+                    decoded_url = unquote(encoded_url)
+                    # Use existing tab for first URL, create new tabs for rest
+                    if i == 0:
+                        tab = state.get_active_tab()
+                    else:
+                        tab = state.create_tab()
+
+                    error = await _load_oobi_into_tab(tab, decoded_url)
+                    if error:
+                        errors.append(f"{_tab_name_from_url(decoded_url)}: {error}")
+                    else:
+                        loaded_count += 1
+                except Exception as e:
+                    errors.append(f"Invalid URL: {e}")
+
+            # Switch back to first tab
+            if state.tab_order:
+                state.active_tab_id = state.tab_order[0]
+
+        tab = state.get_active_tab()
         context = _get_tab_context(tab, request)
 
-        # Handle shared link parameter
-        if kel:
-            try:
-                # URL decode the OOBI URL
-                decoded_url = unquote(kel)
-                error = await _load_oobi_into_tab(tab, decoded_url)
-                if error:
-                    context["share_error"] = f"Failed to load shared link: {error}"
-                else:
-                    # Refresh context after loading
-                    context = _get_tab_context(tab, request)
-                    display_events = _get_display_events(tab)
-                    context["message"] = f"Loaded {len(display_events)} events from shared link"
-            except Exception as e:
-                context["share_error"] = f"Invalid shared link: {e}"
+        if errors:
+            context["share_error"] = "; ".join(errors)
+        if loaded_count > 0:
+            if loaded_count == 1:
+                display_events = _get_display_events(tab)
+                context["message"] = f"Loaded {len(display_events)} events from shared link"
+            else:
+                context["message"] = f"Loaded {loaded_count} tabs from shared link"
 
         return templates.TemplateResponse(
             "index.html",
@@ -272,45 +292,61 @@ def create_app() -> FastAPI:
 
     @app.post("/load", response_class=HTMLResponse)
     async def load_oobi(request: Request, oobi_url: str = Form(...)):
-        """Load events from an OOBI URL into the active tab."""
-        oobi_url = oobi_url.strip()
+        """Load events from OOBI URL(s) into tabs.
+
+        Supports multiple URLs separated by newlines (witness pool).
+        """
+        # Split on newlines and filter empty lines
+        urls = [u.strip() for u in oobi_url.strip().split("\n") if u.strip()]
+
+        if not urls:
+            return templates.TemplateResponse(
+                "partials/error.html",
+                {"request": request, "error": "No URLs provided"},
+            )
+
+        errors = []
+        loaded_count = 0
+        first_tab_id = None
+
+        for i, url in enumerate(urls):
+            try:
+                # Use existing tab for first URL, create new tabs for rest
+                if i == 0:
+                    tab = state.get_active_tab()
+                    first_tab_id = tab.id
+                else:
+                    tab = state.create_tab()
+
+                error = await _load_oobi_into_tab(tab, url)
+                if error:
+                    errors.append(f"{_tab_name_from_url(url)}: {error}")
+                else:
+                    loaded_count += 1
+            except Exception as e:
+                errors.append(f"{_tab_name_from_url(url)}: {e}")
+
+        # Switch back to first tab
+        if first_tab_id:
+            state.active_tab_id = first_tab_id
+
         tab = state.get_active_tab()
-        try:
-            source = OOBISource(oobi_url)
-            events = await source.fetch_events()
-            await source.close()
+        context = _get_tab_context(tab, request)
 
-            # Update tab state
-            tab.events = sorted(events, key=lambda e: e.sequence)
-            tab.source_url = oobi_url
-            tab.selected_index = 0
-            tab.is_witness = _is_witness_url(oobi_url)
-            tab.show_all_aids = False
-            tab.url_aid = source.identifier
-            tab.name = _tab_name_from_url(oobi_url)
-            tab.is_upload = False
+        if errors:
+            context["error"] = "; ".join(errors)
 
-            # Get filtered display events
-            display_events = _get_display_events(tab)
+        if loaded_count > 0:
+            if loaded_count == 1:
+                display_events = _get_display_events(tab)
+                context["message"] = f"Loaded {len(display_events)} events"
+            else:
+                context["message"] = f"Loaded {loaded_count} tabs"
 
-            # Build response with OOB tab bar update
-            context = _get_tab_context(tab, request)
-            context["message"] = f"Loaded {len(display_events)} events"
-
-            return templates.TemplateResponse(
-                "partials/main_content_with_tab_bar.html",
-                context,
-            )
-        except OOBIFetchError as e:
-            return templates.TemplateResponse(
-                "partials/error.html",
-                {"request": request, "error": str(e)},
-            )
-        except Exception as e:
-            return templates.TemplateResponse(
-                "partials/error.html",
-                {"request": request, "error": str(e)},
-            )
+        return templates.TemplateResponse(
+            "partials/main_content_with_tab_bar.html",
+            context,
+        )
 
     @app.post("/upload", response_class=HTMLResponse)
     async def upload_kel(request: Request, kel_file: UploadFile = File(...)):

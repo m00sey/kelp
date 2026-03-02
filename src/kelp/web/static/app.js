@@ -72,6 +72,38 @@ function copyShareLink(btn) {
     });
 }
 
+// Copy share link for all tabs (witness pool)
+function copyShareAllLink() {
+    const tabs = document.querySelectorAll('.tab[data-source-url]');
+    const urls = [];
+
+    tabs.forEach(tab => {
+        const url = tab.dataset.sourceUrl;
+        if (url) {
+            urls.push(encodeURIComponent(url));
+        }
+    });
+
+    if (urls.length === 0) return;
+
+    // Build share URL with multiple kel params
+    const params = urls.map(u => `kel=${u}`).join('&');
+    const shareUrl = `${window.location.origin}/?${params}`;
+
+    const btn = document.querySelector('.share-all-btn');
+    navigator.clipboard.writeText(shareUrl).then(() => {
+        if (btn) {
+            const originalText = btn.textContent;
+            btn.textContent = 'Copied!';
+            btn.classList.add('copied');
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.classList.remove('copied');
+            }, 1500);
+        }
+    });
+}
+
 // jq Editor functions
 function toggleJqEditor() {
     const popover = document.getElementById('jq-editor-popover');
@@ -159,6 +191,82 @@ function initModeToggle() {
 }
 
 document.addEventListener('DOMContentLoaded', initModeToggle);
+document.body.addEventListener('htmx:afterSwap', initModeToggle);
+
+// Split button dropdown
+function toggleLoadDropdown(btn) {
+    const dropdown = btn.parentElement.querySelector('.split-btn-dropdown');
+    if (dropdown) {
+        dropdown.classList.toggle('open');
+    }
+}
+
+function closeLoadDropdown() {
+    document.querySelectorAll('.split-btn-dropdown').forEach(d => d.classList.remove('open'));
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.split-btn')) {
+        closeLoadDropdown();
+    }
+});
+
+// Pool modal functions
+function togglePoolModal() {
+    const modal = document.getElementById('pool-modal');
+    if (!modal) return;
+
+    const isOpen = modal.classList.toggle('open');
+    if (isOpen) {
+        const textarea = document.getElementById('pool-urls');
+        if (textarea) {
+            textarea.focus();
+        }
+    }
+}
+
+function closePoolModal() {
+    const modal = document.getElementById('pool-modal');
+    const textarea = document.getElementById('pool-urls');
+    if (modal) modal.classList.remove('open');
+    if (textarea) textarea.value = '';
+}
+
+function loadPool() {
+    const textarea = document.getElementById('pool-urls');
+    const hiddenInput = document.getElementById('pool-hidden-input');
+    const hiddenForm = document.getElementById('pool-hidden-form');
+
+    if (!textarea || !textarea.value.trim() || !hiddenInput || !hiddenForm) return;
+
+    // Copy URLs to hidden form
+    hiddenInput.value = textarea.value;
+
+    // Close modal and clear textarea
+    closePoolModal();
+
+    // Trigger htmx submission on the hidden form
+    htmx.trigger(hiddenForm, 'submit');
+}
+
+// Close pool modal when clicking outside
+document.addEventListener('click', function(e) {
+    const modal = document.getElementById('pool-modal');
+    if (modal && modal.classList.contains('open') && e.target === modal) {
+        togglePoolModal();
+    }
+});
+
+// Close pool modal on Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        const modal = document.getElementById('pool-modal');
+        if (modal && modal.classList.contains('open')) {
+            togglePoolModal();
+        }
+    }
+});
 
 // Reset file input after successful upload
 document.body.addEventListener('htmx:afterSwap', function(event) {

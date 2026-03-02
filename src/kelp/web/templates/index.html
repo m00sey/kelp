@@ -23,8 +23,40 @@
                        required>
                 <button type="button" class="clear-btn" hx-post="/clear" hx-target="#main-content" hx-swap="innerHTML" onclick="document.getElementById('oobi_url').value=''">&times;</button>
             </div>
-            <button type="submit">Load</button>
+            <div class="split-btn">
+                <button type="submit" class="split-btn-main">Load</button><button type="button" class="split-btn-toggle" onclick="toggleLoadDropdown(this)">▾</button>
+                <div class="split-btn-dropdown" id="load-dropdown">
+                    <button type="button" onclick="togglePoolModal(); closeLoadDropdown();">Load more...</button>
+                </div>
+            </div>
         </form>
+
+        <!-- Hidden form for pool submission -->
+        <form id="pool-hidden-form" style="display:none" hx-post="/load" hx-target="#main-content" hx-swap="innerHTML" hx-indicator="#loading-scrim">
+            <textarea id="pool-hidden-input" name="oobi_url"></textarea>
+        </form>
+
+        <!-- Loading scrim -->
+        <div id="loading-scrim" class="loading-scrim">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Loading witness pool...</div>
+        </div>
+
+        <!-- Pool modal for loading multiple URLs -->
+        <div id="pool-modal" class="pool-modal">
+            <div class="pool-modal-content">
+                <div class="pool-modal-header">
+                    <span>Load Witness Pool</span>
+                    <button type="button" class="pool-modal-close" onclick="togglePoolModal()">&times;</button>
+                </div>
+                <textarea id="pool-urls"
+                          placeholder="Paste multiple OOBI URLs (one per line)"
+                          rows="12"></textarea>
+                <div class="pool-modal-actions">
+                    <button type="button" class="pool-load-btn" onclick="loadPool()">Load All</button>
+                </div>
+            </div>
+        </div>
 
         <!-- Upload form (new) -->
         <form id="upload-form" class="load-form {% if is_upload|default(false) %}active{% endif %}" hx-post="/upload" hx-target="#main-content" hx-swap="innerHTML" hx-encoding="multipart/form-data">

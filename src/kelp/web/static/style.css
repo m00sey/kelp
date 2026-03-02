@@ -189,6 +189,189 @@ footer {
     background: #1e7a7d;
 }
 
+/* Hide dropdown until open */
+.oobi-input .split-btn-dropdown {
+    display: none !important;
+}
+
+.oobi-input .split-btn-dropdown.open {
+    display: block !important;
+}
+
+/* Split button dropdown */
+.split-btn {
+    position: relative;
+    display: inline-flex;
+    vertical-align: middle;
+}
+
+.split-btn > button {
+    margin: 0;
+}
+
+.split-btn-main {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+
+.split-btn-toggle {
+    padding: 0.5rem 0.6rem !important;
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    border-left: 1px solid rgba(0,0,0,0.15) !important;
+    margin-left: -1px;
+}
+
+.split-btn-toggle:hover {
+    background: #1a7a7d !important;
+}
+
+.split-btn-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 2px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 100;
+    min-width: 150px;
+    visibility: hidden;
+    opacity: 0;
+}
+
+.split-btn-dropdown.open {
+    display: block;
+    visibility: visible;
+    opacity: 1;
+}
+
+.split-btn-dropdown button {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 1rem !important;
+    background: transparent !important;
+    color: var(--text-primary) !important;
+    border: none !important;
+    border-radius: 0 !important;
+    text-align: left;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.split-btn-dropdown button:hover {
+    background: var(--hover-bg) !important;
+}
+
+.split-btn-dropdown button:first-child {
+    border-radius: 4px 4px 0 0 !important;
+}
+
+.split-btn-dropdown button:last-child {
+    border-radius: 0 0 4px 4px !important;
+}
+
+.split-btn-dropdown button:only-child {
+    border-radius: 4px !important;
+}
+
+/* Pool modal */
+.pool-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+}
+
+.pool-modal.open {
+    display: flex;
+}
+
+.pool-modal-content {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    width: 90%;
+    max-width: 700px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.pool-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    color: var(--accent-secondary);
+}
+
+.pool-modal-close {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0.25rem;
+}
+
+.pool-modal-close:hover {
+    color: var(--error);
+}
+
+.pool-modal textarea {
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    color: var(--text-primary);
+    font-family: monospace;
+    font-size: 0.9rem;
+    resize: vertical;
+    min-height: 300px;
+}
+
+.pool-modal textarea:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+}
+
+.pool-modal textarea::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.6;
+}
+
+.pool-modal-actions {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.pool-load-btn {
+    padding: 0.5rem 1.5rem;
+    background: var(--accent-primary);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.pool-load-btn:hover {
+    background: #1e7a7d;
+}
+
 /* Mode toggle */
 .load-mode-toggle {
     display: flex;
@@ -1003,6 +1186,45 @@ footer {
 
 .htmx-request .event-item {
     pointer-events: none;
+}
+
+/* Loading scrim */
+.loading-scrim {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 300;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.loading-scrim.htmx-request {
+    display: flex;
+    opacity: 1;
+}
+
+.loading-spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid var(--border-color);
+    border-top-color: var(--accent-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-text {
+    color: var(--text-primary);
+    font-size: 1rem;
 }
 
 /* Scrollbar styling */
