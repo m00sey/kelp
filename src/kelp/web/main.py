@@ -7,6 +7,26 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from urllib.parse import unquote, urlparse
 
+
+def _get_cache_version() -> str:
+    """Get a cache-busting version string from git commit or fallback to timestamp."""
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "--short", "HEAD"],
+            capture_output=True,
+            text=True,
+            timeout=1,
+        )
+        if result.returncode == 0:
+            return result.stdout.strip()
+    except Exception:
+        pass
+    # Fallback: use file modification time of style.css
+    css_path = Path(__file__).parent / "static" / "style.css"
+    if css_path.exists():
+        return str(int(css_path.stat().st_mtime))
+    return "1"
+
 from fastapi import FastAPI, File, Form, Query, Request, UploadFile
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
@@ -144,6 +164,9 @@ def create_app() -> FastAPI:
 
     # Add custom filters to Jinja2
     templates.env.filters["tojson_pretty"] = lambda x: json.dumps(x, indent=2)
+
+    # Add cache version as global variable
+    templates.env.globals["cache_version"] = _get_cache_version()
 
     # In-memory state with multi-tab support
     state = AppState()
