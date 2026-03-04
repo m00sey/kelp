@@ -26,6 +26,31 @@ COUNTER_NAMES = {
     "-Z": "ESSR Payload Group",
 }
 
+# Signature code to algorithm name mapping
+# Indexed signatures (from keripy IdrDex)
+SIG_ALGORITHM_NAMES = {
+    "A": "Ed25519",
+    "B": "Ed25519",
+    "C": "secp256k1",
+    "D": "secp256k1",
+    "E": "secp256r1",
+    "F": "secp256r1",
+    "0A": "Ed448",
+    "2A": "Ed25519",
+    "2B": "Ed25519",
+    "2C": "secp256k1",
+    "2D": "secp256k1",
+    "2E": "secp256r1",
+    "2F": "secp256r1",
+    "3A": "Ed448",
+    "3B": "Ed448",
+    # Non-indexed signatures (from keripy MtrDex)
+    "0B": "Ed25519",
+    "0C": "secp256k1",
+    "0I": "secp256r1",
+    "1AAE": "Ed448",
+}
+
 
 class CESRParser:
     """Parser for CESR-encoded streams using keripy."""
@@ -186,6 +211,7 @@ class CESRParser:
                             "index": siger.index,
                             "ondex": getattr(siger, "ondex", None),
                             "code": siger.code,
+                            "algorithm": SIG_ALGORITHM_NAMES.get(siger.code, siger.code),
                             "qb64": siger.qb64,
                         }
                     )
@@ -205,6 +231,8 @@ class CESRParser:
                             "type": "receipt_couple",
                             "prefix": prefixer.qb64,
                             "signature": cigar.qb64,
+                            "sig_code": cigar.code,
+                            "algorithm": SIG_ALGORITHM_NAMES.get(cigar.code, cigar.code),
                         }
                     )
 

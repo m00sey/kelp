@@ -41,14 +41,16 @@
                 {% for mat in attachment.materials %}
                 <div class="material-item">
                     {% if mat.type == 'indexed_sig' %}
-                    <span class="material-label">Sig #{{ mat.index }}</span>
+                    <span class="material-label">Sig #{{ mat.index }} ({{ mat.algorithm }})</span>
                     <code class="full-value">{{ mat.qb64 }}</code>
                     {% elif mat.type == 'witness_sig' %}
-                    <span class="material-label">Witness #{{ mat.index }}</span>
+                    <span class="material-label">Witness #{{ mat.index }}{% if mat.algorithm %} ({{ mat.algorithm }}){% endif %}</span>
                     <code class="full-value">{{ mat.qb64 }}</code>
                     {% elif mat.type == 'receipt_couple' %}
                     <span class="material-label">Prefix</span>
                     <code class="full-value">{{ mat.prefix }}</code>
+                    <span class="material-label">Signature ({{ mat.algorithm }})</span>
+                    <code class="full-value">{{ mat.signature }}</code>
                     {% elif mat.type == 'seal_source' %}
                     <span class="material-label">Seal sn={{ mat.sn }}</span>
                     <code class="full-value">{{ mat.said }}</code>
