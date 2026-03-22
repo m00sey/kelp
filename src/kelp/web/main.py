@@ -219,7 +219,6 @@ def create_app() -> FastAPI:
         """Build template context for a tab."""
         display_events = _get_display_events(tab)
         return {
-            "request": request,
             "events": display_events,
             "events_by_aid": _group_events_by_aid(display_events, tab.events) if tab.is_witness else None,
             "is_witness": tab.is_witness,
@@ -309,6 +308,7 @@ def create_app() -> FastAPI:
                 context["message"] = f"Loaded {loaded_count} tabs from shared link"
 
         return templates.TemplateResponse(
+            request,
             "index.html",
             context,
         )
@@ -324,8 +324,9 @@ def create_app() -> FastAPI:
 
         if not urls:
             return templates.TemplateResponse(
+                request,
                 "partials/error.html",
-                {"request": request, "error": "No URLs provided"},
+                {"error": "No URLs provided"},
             )
 
         errors = []
@@ -367,6 +368,7 @@ def create_app() -> FastAPI:
                 context["message"] = f"Loaded {loaded_count} tabs"
 
         return templates.TemplateResponse(
+            request,
             "partials/main_content_with_tab_bar.html",
             context,
         )
@@ -407,13 +409,15 @@ def create_app() -> FastAPI:
             context["message"] = f"Uploaded {len(display_events)} events from {kel_file.filename}"
 
             return templates.TemplateResponse(
+                request,
                 "partials/main_content_with_tab_bar.html",
                 context,
             )
         except Exception as e:
             return templates.TemplateResponse(
+                request,
                 "partials/error.html",
-                {"request": request, "error": f"Upload failed: {str(e)}"},
+                {"error": f"Upload failed: {str(e)}"},
             )
 
     @app.get("/event/{index}", response_class=HTMLResponse)
@@ -424,12 +428,14 @@ def create_app() -> FastAPI:
             tab.selected_index = index
             event = tab.events[index]
             return templates.TemplateResponse(
+                request,
                 "partials/event_detail.html",
-                {"request": request, "event": event, "index": index},
+                {"event": event, "index": index},
             )
         return templates.TemplateResponse(
+            request,
             "partials/error.html",
-            {"request": request, "error": "Event not found"},
+            {"error": "Event not found"},
         )
 
     @app.get("/events", response_class=HTMLResponse)
@@ -453,9 +459,9 @@ def create_app() -> FastAPI:
             events = filtered
 
         return templates.TemplateResponse(
+            request,
             "partials/event_list.html",
             {
-                "request": request,
                 "events": events,
                 "events_by_aid": _group_events_by_aid(events, tab.events) if tab.is_witness else None,
                 "is_witness": tab.is_witness,
@@ -474,6 +480,7 @@ def create_app() -> FastAPI:
         tab.selected_index = 0
 
         return templates.TemplateResponse(
+            request,
             "partials/main_content.html",
             _get_tab_context(tab, request),
         )
@@ -492,6 +499,7 @@ def create_app() -> FastAPI:
         tab.is_upload = False
 
         return templates.TemplateResponse(
+            request,
             "partials/main_content_with_tab_bar.html",
             _get_tab_context(tab, request),
         )
@@ -502,6 +510,7 @@ def create_app() -> FastAPI:
         """Create a new tab and make it active."""
         tab = state.create_tab()
         return templates.TemplateResponse(
+            request,
             "partials/tab_content.html",
             _get_tab_context(tab, request),
         )
@@ -513,6 +522,7 @@ def create_app() -> FastAPI:
             state.active_tab_id = tab_id
         tab = state.get_active_tab()
         return templates.TemplateResponse(
+            request,
             "partials/tab_content.html",
             _get_tab_context(tab, request),
         )
@@ -523,6 +533,7 @@ def create_app() -> FastAPI:
         state.close_tab(tab_id)
         tab = state.get_active_tab()
         return templates.TemplateResponse(
+            request,
             "partials/tab_content.html",
             _get_tab_context(tab, request),
         )

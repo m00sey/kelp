@@ -9,7 +9,7 @@ terraform init
 terraform apply -auto-approve
 cd ..
 
-echo "==> Waiting for droplet to be ready..."
+echo "==> Waiting for server to be ready..."
 sleep 30
 
 echo "==> Ansible: Deploying application..."

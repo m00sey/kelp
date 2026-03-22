@@ -1,17 +1,23 @@
-variable "do_token" {
-  description = "Digital Ocean API token"
+variable "hcloud_token" {
+  description = "Hetzner Cloud API token"
   type        = string
   sensitive   = true
 }
 
-variable "region" {
-  description = "DO region"
+variable "location" {
+  description = "Hetzner datacenter location (nbg1, fsn1, hel1, ash)"
   type        = string
-  default     = "nyc1"
+  default     = "nbg1"
+}
+
+variable "server_type" {
+  description = "Hetzner server type"
+  type        = string
+  default     = "cax11"
 }
 
 variable "ssh_key_name" {
-  description = "Name of existing SSH key in Digital Ocean"
+  description = "Name of existing SSH key in Hetzner"
   type        = string
 }
 
@@ -22,13 +28,13 @@ variable "ssh_private_key_path" {
 }
 
 variable "domain" {
-  description = "Domain name registered in DO"
+  description = "Domain name"
   type        = string
   default     = "vroblok.io"
 }
 
 variable "ssh_allowed_cidrs" {
-  description = "CIDR blocks allowed to SSH (e.g., [\"1.2.3.4/32\"] for single IP)"
+  description = "CIDR blocks allowed to SSH"
   type        = list(string)
-  default     = ["0.0.0.0/0", "::/0"]  # Open by default, override in tfvars
+  default     = ["0.0.0.0/0", "::/0"]
 }

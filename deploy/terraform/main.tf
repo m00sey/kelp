@@ -1,84 +1,83 @@
 terraform {
   required_providers {
-    digitalocean = {
-      source  = "digitalocean/digitalocean"
-      version = "~> 2.0"
+    hcloud = {
+      source  = "hetznercloud/hcloud"
+      version = "~> 1.45"
     }
   }
 }
 
-provider "digitalocean" {
-  token = var.do_token
+provider "hcloud" {
+  token = var.hcloud_token
 }
 
 # Look up existing SSH key by name
-data "digitalocean_ssh_key" "default" {
+data "hcloud_ssh_key" "default" {
   name = var.ssh_key_name
 }
 
-resource "digitalocean_droplet" "kelp" {
-  name     = "kelp"
-  region   = var.region
-  size     = "s-1vcpu-1gb"
-  image    = "ubuntu-24-04-x64"
-  ssh_keys = [data.digitalocean_ssh_key.default.id]
+resource "hcloud_server" "kelp" {
+  name        = "kelp"
+  server_type = var.server_type
+  image       = "ubuntu-24.04"
+  location    = var.location
+  ssh_keys    = [data.hcloud_ssh_key.default.id]
 
-  tags = ["kelp", "web"]
+  labels = {
+    app = "kelp"
+    env = "web"
+  }
 }
 
-# DNS record for kelp.vroblock.io
-data "digitalocean_domain" "vroblock" {
-  name = var.domain
+resource "hcloud_firewall" "kelp" {
+  name = "kelp-fw"
+
+  rule {
+    direction  = "in"
+    protocol   = "tcp"
+    port       = "22"
+    source_ips = var.ssh_allowed_cidrs
+  }
+
+  rule {
+    direction  = "in"
+    protocol   = "tcp"
+    port       = "80"
+    source_ips = ["0.0.0.0/0", "::/0"]
+  }
+
+  rule {
+    direction  = "in"
+    protocol   = "tcp"
+    port       = "443"
+    source_ips = ["0.0.0.0/0", "::/0"]
+  }
+
+  rule {
+    direction       = "out"
+    protocol        = "tcp"
+    port            = "1-65535"
+    destination_ips = ["0.0.0.0/0", "::/0"]
+  }
+
+  rule {
+    direction       = "out"
+    protocol        = "udp"
+    port            = "1-65535"
+    destination_ips = ["0.0.0.0/0", "::/0"]
+  }
 }
 
-resource "digitalocean_record" "kelp" {
-  domain = data.digitalocean_domain.vroblock.id
-  type   = "A"
-  name   = "kelp"
-  value  = digitalocean_droplet.kelp.ipv4_address
-  ttl    = 300
-}
-
-resource "digitalocean_firewall" "kelp" {
-  name        = "kelp-fw"
-  droplet_ids = [digitalocean_droplet.kelp.id]
-
-  inbound_rule {
-    protocol         = "tcp"
-    port_range       = "22"
-    source_addresses = var.ssh_allowed_cidrs
-  }
-
-  inbound_rule {
-    protocol         = "tcp"
-    port_range       = "80"
-    source_addresses = ["0.0.0.0/0", "::/0"]
-  }
-
-  inbound_rule {
-    protocol         = "tcp"
-    port_range       = "443"
-    source_addresses = ["0.0.0.0/0", "::/0"]
-  }
-
-  outbound_rule {
-    protocol              = "tcp"
-    port_range            = "1-65535"
-    destination_addresses = ["0.0.0.0/0", "::/0"]
-  }
-
-  outbound_rule {
-    protocol              = "udp"
-    port_range            = "1-65535"
-    destination_addresses = ["0.0.0.0/0", "::/0"]
-  }
+resource "hcloud_firewall_attachment" "kelp" {
+  firewall_id = hcloud_firewall.kelp.id
+  server_ids  = [hcloud_server.kelp.id]
 }
 
 # Generate Ansible inventory
 resource "local_file" "ansible_inventory" {
   content = <<-EOF
     [kelp]
-    ${digitalocean_droplet.kelp.ipv4_address} ansible_user=root ansible_ssh_private_key_file=${var.ssh_private_key_path}
+    ${hcloud_server.kelp.ipv4_address} ansible_user=root ansible_ssh_private_key_file=${var.ssh_private_key_path}
   EOF
   filename = "${path.module}/../ansible/inventory.ini"
 }
