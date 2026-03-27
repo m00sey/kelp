@@ -83,7 +83,20 @@ class AppState:
 
     def close_tab(self, tab_id: str) -> str | None:
         """Close a tab and return the ID of the new active tab."""
-        if tab_id not in self.tabs or len(self.tabs) <= 1:
+        if tab_id not in self.tabs:
+            return self.active_tab_id
+
+        # Last tab: reset it to empty state instead of removing
+        if len(self.tabs) <= 1:
+            tab = self.tabs[tab_id]
+            tab.events = []
+            tab.source_url = ""
+            tab.selected_index = 0
+            tab.name = "New Tab"
+            tab.is_upload = False
+            tab.is_witness = False
+            tab.show_all_aids = False
+            tab.url_aid = None
             return self.active_tab_id
 
         # Find adjacent tab to switch to

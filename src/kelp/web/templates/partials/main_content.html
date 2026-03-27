@@ -1,5 +1,9 @@
 {% if message %}
-<div class="message">{{ message }}</div>
+<div class="message" id="flash-message">
+    <span>{{ message }}</span>
+    <button class="message-dismiss" onclick="this.parentElement.remove()">&times;</button>
+</div>
+<script>setTimeout(function(){var m=document.getElementById('flash-message');if(m)m.remove()},5000)</script>
 {% endif %}
 
 {% if events %}
