@@ -1,6 +1,6 @@
 [project]
 name = "kelp"
-version = "0.1.0"
+version = "1.0.0"
 description = "KELP - Key Event Log Parser: A web UI for browsing KERI Key Event Logs"
 requires-python = ">=3.12.2"
 dependencies = [

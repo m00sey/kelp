@@ -166,7 +166,7 @@ def create_app() -> FastAPI:
     app = FastAPI(
         title="KELP",
         description="Key Event Log Parser - Browse KERI Key Event Logs",
-        version="0.1.0",
+        version="1.0.0",
     )
 
     # Mount static files
