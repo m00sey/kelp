@@ -14,4 +14,14 @@
         {% endfor %}
     </div>
     <button class="tab-new" hx-post="/tab/new" hx-target="#tab-content">+</button>
+    <div class="collections-container">
+        <button class="collections-btn" onclick="toggleCollectionsDropdown()" title="Collections">&#9776;</button>
+        <div class="collections-dropdown" id="collections-dropdown">
+            <div class="collections-header">
+                <span>Collections</span>
+                <button class="collections-save-btn" onclick="saveCollection()">Save Current</button>
+            </div>
+            <div class="collections-list" id="collections-list"></div>
+        </div>
+    </div>
 </div>

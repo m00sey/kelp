@@ -551,6 +551,56 @@ def create_app() -> FastAPI:
             _get_tab_context(tab, request),
         )
 
+    @app.post("/collection/load", response_class=HTMLResponse)
+    async def load_collection(request: Request, urls: str = Form(...)):
+        """Load a collection of OOBI URLs into tabs."""
+        url_list = [u.strip() for u in urls.strip().split("\n") if u.strip()]
+
+        if not url_list:
+            tab = state.get_active_tab()
+            return templates.TemplateResponse(
+                request,
+                "partials/tab_content.html",
+                _get_tab_context(tab, request),
+            )
+
+        errors = []
+        loaded_count = 0
+        first_tab_id = None
+
+        for i, url in enumerate(url_list):
+            try:
+                if i == 0:
+                    tab = state.get_active_tab()
+                    first_tab_id = tab.id
+                else:
+                    tab = state.create_tab()
+
+                error = await _load_oobi_into_tab(tab, url)
+                if error:
+                    errors.append(f"{_tab_name_from_url(url)}: {error}")
+                else:
+                    loaded_count += 1
+            except Exception as e:
+                errors.append(f"{_tab_name_from_url(url)}: {e}")
+
+        if first_tab_id:
+            state.active_tab_id = first_tab_id
+
+        tab = state.get_active_tab()
+        context = _get_tab_context(tab, request)
+
+        if errors:
+            context["error"] = "; ".join(errors)
+        if loaded_count > 0:
+            context["message"] = f"Loaded {loaded_count} tab{'s' if loaded_count > 1 else ''} from collection"
+
+        return templates.TemplateResponse(
+            request,
+            "partials/tab_content.html",
+            context,
+        )
+
     return app
 
 

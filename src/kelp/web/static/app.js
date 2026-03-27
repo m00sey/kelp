@@ -268,6 +268,107 @@ document.addEventListener('keydown', function(e) {
     }
 });
 
+// Collections - stored in localStorage
+function getCollections() {
+    try {
+        return JSON.parse(localStorage.getItem('kelp-collections') || '[]');
+    } catch { return []; }
+}
+
+function setCollections(collections) {
+    localStorage.setItem('kelp-collections', JSON.stringify(collections));
+}
+
+function toggleCollectionsDropdown() {
+    const dropdown = document.getElementById('collections-dropdown');
+    if (!dropdown) return;
+    const opening = !dropdown.classList.contains('open');
+    dropdown.classList.toggle('open');
+    if (opening) renderCollectionsList();
+}
+
+function saveCollection() {
+    const tabs = document.querySelectorAll('.tab[data-source-url]');
+    const urls = [];
+    tabs.forEach(tab => {
+        const url = tab.dataset.sourceUrl;
+        if (url) urls.push(url);
+    });
+
+    if (urls.length === 0) {
+        alert('No loaded tabs to save.');
+        return;
+    }
+
+    const title = prompt('Collection name:');
+    if (!title || !title.trim()) return;
+
+    const collections = getCollections();
+    collections.push({ title: title.trim(), urls: urls, created: Date.now() });
+    setCollections(collections);
+    renderCollectionsList();
+}
+
+function loadCollection(index) {
+    const collections = getCollections();
+    if (index < 0 || index >= collections.length) return;
+
+    const collection = collections[index];
+    const hiddenForm = document.getElementById('collection-hidden-form');
+    const hiddenInput = document.getElementById('collection-hidden-input');
+    if (!hiddenForm || !hiddenInput) return;
+
+    hiddenInput.value = collection.urls.join('\n');
+    htmx.trigger(hiddenForm, 'submit');
+
+    // Close dropdown
+    const dropdown = document.getElementById('collections-dropdown');
+    if (dropdown) dropdown.classList.remove('open');
+}
+
+function deleteCollection(index, event) {
+    event.stopPropagation();
+    const collections = getCollections();
+    if (index < 0 || index >= collections.length) return;
+
+    const name = collections[index].title;
+    if (!confirm(`Delete "${name}"?`)) return;
+
+    collections.splice(index, 1);
+    setCollections(collections);
+    renderCollectionsList();
+}
+
+function renderCollectionsList() {
+    const list = document.getElementById('collections-list');
+    if (!list) return;
+
+    const collections = getCollections();
+    if (collections.length === 0) {
+        list.innerHTML = '<div class="collections-empty">No saved collections</div>';
+        return;
+    }
+
+    list.innerHTML = collections.map((c, i) =>
+        `<div class="collection-item" onclick="loadCollection(${i})">
+            <div class="collection-info">
+                <span class="collection-title">${c.title.replace(/</g, '&lt;')}</span>
+                <span class="collection-count">${c.urls.length} tab${c.urls.length !== 1 ? 's' : ''}</span>
+            </div>
+            <button class="collection-delete" onclick="deleteCollection(${i}, event)" title="Delete">&times;</button>
+        </div>`
+    ).join('');
+}
+
+// Close collections dropdown when clicking outside
+document.addEventListener('click', function(e) {
+    const container = document.querySelector('.collections-container');
+    const dropdown = document.getElementById('collections-dropdown');
+    if (dropdown && dropdown.classList.contains('open') && container && !container.contains(e.target)) {
+        dropdown.classList.remove('open');
+    }
+});
+
 // Reset file input after successful upload
 document.body.addEventListener('htmx:afterSwap', function(event) {
     // Clear file input when main content updates (after upload)

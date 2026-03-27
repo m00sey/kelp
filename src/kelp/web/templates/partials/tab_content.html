@@ -66,6 +66,11 @@
     </form>
 </section>
 
+<!-- Hidden form for collection loading -->
+<form id="collection-hidden-form" style="display:none" hx-post="/collection/load" hx-target="#tab-content" hx-swap="innerHTML" hx-indicator="#loading-scrim">
+    <textarea id="collection-hidden-input" name="urls"></textarea>
+</form>
+
 <div id="main-content">
     {% include "partials/main_content.html" %}
 </div>
