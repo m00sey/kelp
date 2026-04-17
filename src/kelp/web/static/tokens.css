@@ -1,0 +1,71 @@
+/*
+ * GLEIF brand tokens — vendored from @m00sey/gleif-brand.
+ * Must load BEFORE the site stylesheet. No hardcoded hexes in site CSS;
+ * reference these variables (or use color-mix) instead.
+ */
+
+:root {
+    /* Core palette */
+    --gleif-cyprus: #003336;
+    --gleif-turquoise: #51DAC5;
+    --gleif-jade: #28999C;
+    --gleif-spring: #B5EAD7;
+    --gleif-fern: #1F7A7D;
+
+    /* Detail palette — data-viz, small accents */
+    --gleif-honey: #FFA300;
+    --gleif-amber: #FF6845;
+    --gleif-lava: #DC1A45;
+    --gleif-azure: #19A5FF;
+    --gleif-damson: #403E78;
+    --gleif-lavender: #7764B1;
+    --gleif-cloud: #E5DCE6;
+    --gleif-shell: #CCAEA4;
+    --gleif-smoke: #6A7B7F;
+
+    /* Semantic aliases */
+    --color-bg: #FFFFFF;
+    --color-surface: #F5F7F7;
+    --color-text: var(--gleif-cyprus);
+    --color-text-muted: var(--gleif-smoke);
+    --color-text-inverse: #FFFFFF;
+    --color-accent: var(--gleif-turquoise);
+    --color-accent-deep: var(--gleif-fern);
+    --color-accent-mid: var(--gleif-jade);
+    --color-link: var(--gleif-fern);
+    --color-link-hover: var(--gleif-jade);
+
+    /* Typography */
+    --font-sans: "Facundo", Calibri, system-ui, -apple-system, BlinkMacSystemFont,
+                 "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-weight-regular: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    --line-height-heading: 1.1;
+    --line-height-body: 1.4;
+    --font-size-h1: 2.25rem;
+    --font-size-h2: 1.75rem;
+    --font-size-h3: 1.25rem;
+    --font-size-h4: 1rem;
+    --font-size-body: 1rem;
+    --font-size-sm: 0.875rem;
+}
+
+/* Utility classes */
+.bg-gradient-cyprus-turquoise {
+    background: linear-gradient(135deg, var(--gleif-cyprus), var(--gleif-turquoise));
+}
+.bg-gradient-spring-turquoise {
+    background: linear-gradient(135deg, var(--gleif-spring), var(--gleif-turquoise));
+}
+.bg-gradient-fern-turquoise {
+    background: linear-gradient(135deg, var(--gleif-fern), var(--gleif-turquoise));
+}
+.bg-gradient-cyprus-spring {
+    background: linear-gradient(135deg, var(--gleif-cyprus), var(--gleif-spring));
+}
+.surface-inverse {
+    background: var(--gleif-cyprus);
+    color: var(--color-text-inverse);
+}
