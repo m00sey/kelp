@@ -1,0 +1,47 @@
+{
+    order rate_limit before basicauth
+}
+
+(hardening) {
+    request_body {
+        max_size {{ max_upload_size }}
+    }
+    rate_limit {
+        zone per_ip {
+            key {remote_host}
+            events {{ rate_limit_events }}
+            window {{ rate_limit_window }}
+        }
+    }
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        -Server
+    }
+}
+
+{{ site_domain }} {
+    import hardening
+
+    log {
+        output file /var/log/caddy/access.log {
+            roll_size 50mb
+            roll_keep 5
+        }
+    }
+
+{% if upstream is defined %}
+    reverse_proxy {{ upstream }}
+{% else %}
+    root * {{ root_dir }}
+    encode gzip
+    try_files {path} /index.html
+    file_server
+{% endif %}
+{% if extra_site_config is defined %}
+
+    {{ extra_site_config | indent(4) }}
+{% endif %}
+}

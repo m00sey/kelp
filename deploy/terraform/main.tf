@@ -77,7 +77,7 @@ resource "hcloud_firewall_attachment" "kelp" {
 resource "local_file" "ansible_inventory" {
   content = <<-EOF
     [kelp]
-    ${hcloud_server.kelp.ipv4_address} ansible_user=root ansible_ssh_private_key_file=${var.ssh_private_key_path}
+    ${hcloud_server.kelp.ipv4_address} ansible_user=root ansible_ssh_private_key_file=${var.ssh_private_key_path} ansible_ssh_common_args='-o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=~/.ssh/known_hosts'
   EOF
   filename = "${path.module}/../ansible/inventory.ini"
 }

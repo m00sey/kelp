@@ -1111,20 +1111,6 @@ footer {
 }
 
 /* Empty / No selection states */
-.empty-state {
-    flex: 1;
-    display: flex;
-    align-items: flex-end;
-    overflow: hidden;
-}
-
-.empty-state-bg {
-    width: 100%;
-    height: auto;
-    opacity: 0.5;
-    filter: grayscale(1);
-}
-
 .no-selection {
     text-align: center;
     padding: 3rem;

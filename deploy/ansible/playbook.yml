@@ -82,40 +82,9 @@
         ports:
           - "127.0.0.1:8000:8000"
 
-    - name: Install Caddy GPG key
-      apt_key:
-        url: https://dl.cloudsmith.io/public/caddy/stable/gpg.key
-        state: present
-
-    - name: Add Caddy repository
-      apt_repository:
-        repo: deb https://dl.cloudsmith.io/public/caddy/stable/deb/debian any-version main
-        state: present
-
-    - name: Install Caddy
-      apt:
-        name: caddy
-        state: present
-        update_cache: yes
-
-    - name: Configure Caddy
-      copy:
-        content: |
-          kelp.vroblok.io {
-              reverse_proxy localhost:8000
-          }
-        dest: /etc/caddy/Caddyfile
-      notify: Restart Caddy
-
-    - name: Start Caddy service
-      systemd:
-        name: caddy
-        state: started
-        enabled: yes
-
-  handlers:
-    - name: Restart Caddy
-      systemd:
-        name: caddy
-        state: restarted
-        daemon_reload: yes
+    - name: Configure hardened Caddy
+      import_role:
+        name: caddy-hardened
+      vars:
+        site_domain: kelp.vroblok.io
+        upstream: "127.0.0.1:8000"

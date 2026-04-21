@@ -1,0 +1,29 @@
+---
+# Hostname this site answers on (required; override per site)
+site_domain: example.com
+
+# Exactly one of these must be set
+# upstream: "127.0.0.1:8000"     # for reverse-proxy sites (saidify, kelp)
+# root_dir: "/opt/vast"          # for static SPA sites (vast, veaf)
+
+# Per-request body cap — stops oversized uploads at the edge (returns 413)
+max_upload_size: 10MB
+
+# Per-IP rate limit (returns 429 once exceeded)
+rate_limit_events: 60
+rate_limit_window: 1m
+
+# fail2ban threshold for banning IPs that keep hitting 429
+fail2ban_maxretry: 30
+fail2ban_findtime: 60
+fail2ban_bantime: 3600
+
+# Pinned Go toolchain used by xcaddy to compile Caddy.
+# Verify checksums at https://go.dev/dl/ and tighten get_url if you want supply-chain guarantees.
+go_version: "1.23.4"
+go_arch: "{{ 'arm64' if ansible_architecture == 'aarch64' else 'amd64' }}"
+
+# Custom Caddy binary location. We keep the apt-installed /usr/bin/caddy in place
+# (so the distro package can update user/systemd scaffolding safely) and point
+# systemd at this binary via a drop-in override.
+caddy_custom_bin: /usr/local/bin/caddy

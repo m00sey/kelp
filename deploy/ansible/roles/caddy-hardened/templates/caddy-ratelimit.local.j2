@@ -1,0 +1,9 @@
+[caddy-ratelimit]
+enabled = true
+port = http,https
+filter = caddy-ratelimit
+logpath = /var/log/caddy/access.log
+maxretry = {{ fail2ban_maxretry }}
+findtime = {{ fail2ban_findtime }}
+bantime = {{ fail2ban_bantime }}
+backend = auto
