@@ -86,5 +86,5 @@
       import_role:
         name: caddy-hardened
       vars:
-        site_domain: kelp.vroblok.io
+        site_domain: kelp.keri.help
         upstream: "127.0.0.1:8000"

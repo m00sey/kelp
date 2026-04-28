@@ -30,7 +30,7 @@ variable "ssh_private_key_path" {
 variable "domain" {
   description = "Domain name"
   type        = string
-  default     = "vroblok.io"
+  default     = "keri.help"
 }
 
 variable "ssh_allowed_cidrs" {

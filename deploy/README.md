@@ -27,7 +27,7 @@ Deploy KELP to Digital Ocean with Terraform + Ansible. Includes automatic HTTPS 
    ./deploy.sh
    ```
 
-4. Visit: **https://kelp.vroblok.io**
+4. Visit: **https://kelp.keri.help**
 
 ## Commands
 
@@ -60,7 +60,7 @@ Deploy KELP to Digital Ocean with Terraform + Ansible. Includes automatic HTTPS 
 │  └─────────────────────────────────┘   │
 └─────────────────────────────────────────┘
          │
-    DNS: kelp.vroblok.io
+    DNS: kelp.keri.help
     Firewall: 22 (SSH), 80, 443 (HTTPS)
 ```
 
